@@ -549,7 +549,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 5.3: Zod Schemas for Finance & Dues
+### [x] Task 5.3: Zod Schemas for Finance & Dues
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Skema Zod modul Finance & Dues (`CreateTransactionSchema`, `UpdateTransactionSchema`, `CreateAccountSchema`, `CreateDuePlanSchema`, `CreatePaymentSchema`) diimplementasikan di `src/lib/validation/finance.schema.ts` dan `dues.schema.ts`.
+  - Siklus TDD berhasil: RED (skema belum ada), GREEN (10 unit tests di `tests/unit/validation-finance.test.ts` lolos memverifikasi penolakan transaksi bernilai 0 atau negatif, format tanggal transaksi YYYY-MM-DD, saldo non-negatif, nominal iuran positif, dan metode pembayaran cash/transfer), REFACTOR (tipe input & output Zod terstandarisasi).
 - **Deskripsi:** Skema validasi untuk transaksi kas masuk/keluar, rencana iuran, dan verifikasi bukti transfer.
 - **Layer:** Service / Validation Boundary
 - **File yang Disentuh:**
