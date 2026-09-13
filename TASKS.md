@@ -165,7 +165,11 @@ flowchart TD
 
 ## Fase 2: Multi-Tenancy, Identity, & RBAC
 
-### [ ] Task 2.1: Database Migration: Core Identity & Multi-Tenancy Schema
+### [x] Task 2.1: Database Migration: Core Identity & Multi-Tenancy Schema
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Migrasi PostgreSQL core identity & multi-tenancy dibuat di `supabase/migrations/20260913000001_core_identity.sql`.
+  - Siklus TDD berhasil: RED (file migrasi belum ada), GREEN (6 integration tests lolos memverifikasi isolasi transaksi atomik, slug constraint, nullable user_id shadow profile, dan seed system roles/permissions), REFACTOR (tata rapi skema).
 - **Deskripsi:** Menulis migrasi SQL PostgreSQL untuk tabel: `organizations`, `organization_members`, `profiles`, `roles`, `permissions`, dan `role_permissions`.
 - **Layer:** Data Access / Database Schema
 - **File yang Disentuh:**
