@@ -31,10 +31,12 @@ export const CreateMemberSchema = z.object({
   residentStatus: ResidentStatusEnum.default('tetap'),
 });
 
-export type CreateMemberInput = z.infer<typeof CreateMemberSchema>;
+export type CreateMemberInput = z.input<typeof CreateMemberSchema>;
+export type CreateMemberOutput = z.output<typeof CreateMemberSchema>;
 
 export const UpdateMemberSchema = CreateMemberSchema.partial();
-export type UpdateMemberInput = z.infer<typeof UpdateMemberSchema>;
+export type UpdateMemberInput = z.input<typeof UpdateMemberSchema>;
+export type UpdateMemberOutput = z.output<typeof UpdateMemberSchema>;
 
 export const CreateTeamSchema = z.object({
   organizationId: z.string({ required_error: 'Organization ID wajib diisi' }).uuid('Organization ID tidak valid'),
@@ -45,4 +47,5 @@ export const CreateTeamSchema = z.object({
   description: z.string().max(300, 'Deskripsi maksimal 300 karakter').optional().nullable(),
 });
 
-export type CreateTeamInput = z.infer<typeof CreateTeamSchema>;
+export type CreateTeamInput = z.input<typeof CreateTeamSchema>;
+export type CreateTeamOutput = z.output<typeof CreateTeamSchema>;

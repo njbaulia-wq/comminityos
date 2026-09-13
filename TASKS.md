@@ -339,7 +339,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 3.3: Member & Team Domain Service
+### [x] Task 3.3: Member & Team Domain Service
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Service logika bisnis manajemen warga dan tim (`createMember`, `updateMember`, `archiveMember`, `createTeam`, `assignTeamMember`) diimplementasikan di `src/server/services/people.service.ts`.
+  - Siklus TDD berhasil: RED (service belum ada), GREEN (10 integration tests di `tests/integration/people.service.test.ts` lolos memverifikasi otorisasi `members.manage`, pencegahan duplikasi nomor HP, penanganan profil warga & shadow profile, soft-delete, dan pencegahan duplikasi tim), REFACTOR (tipe input Zod terpisah).
 - **Deskripsi:** Service logika bisnis untuk menambah anggota/warga, mengedit profil, menugaskan role, dan mengelompokkan ke dalam tim/seksi.
 - **Layer:** Service / Domain Logic
 - **File yang Disentuh:**
