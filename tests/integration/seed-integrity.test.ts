@@ -37,6 +37,31 @@ describe('Realistic Indonesian Community Seed Data Script', () => {
     expect(sql).toContain('due_items');
   });
 
+  it('should strictly conform to migration schemas and not insert invalid columns', () => {
+    const sql = fs.readFileSync(seedSqlPath, 'utf-8');
+
+    // 1. organizations must not have 'description' column in INSERT
+    expect(sql).not.toMatch(/INSERT\s+INTO\s+organizations[^(]*\([^)]*\bdescription\b[^)]*\)/i);
+
+    // 2. profiles must not have 'email', 'rt', or 'rw' as column names in INSERT
+    expect(sql).not.toMatch(/INSERT\s+INTO\s+profiles[^(]*\([^)]*\bemail\b[^)]*\)/i);
+    expect(sql).not.toMatch(/INSERT\s+INTO\s+profiles[^(]*\([^)]*,\s*rt\s*,/i);
+    expect(sql).not.toMatch(/INSERT\s+INTO\s+profiles[^(]*\([^)]*,\s*rw\s*,/i);
+    // profiles must use rt_number and rw_number
+    expect(sql).toMatch(/INSERT\s+INTO\s+profiles[^(]*\([^)]*\brt_number\b[^)]*\)/i);
+    expect(sql).toMatch(/INSERT\s+INTO\s+profiles[^(]*\([^)]*\brw_number\b[^)]*\)/i);
+
+    // 3. due_plans must not have 'description' column in INSERT
+    expect(sql).not.toMatch(/INSERT\s+INTO\s+due_plans[^(]*\([^)]*\bdescription\b[^)]*\)/i);
+
+    // 4. due_items must use member_id, not citizen_id
+    expect(sql).not.toMatch(/INSERT\s+INTO\s+due_items[^(]*\([^)]*\bcitizen_id\b[^)]*\)/i);
+    expect(sql).toMatch(/INSERT\s+INTO\s+due_items[^(]*\([^)]*\bmember_id\b[^)]*\)/i);
+
+    // 5. organization_members must be seeded so due_items FK is satisfied
+    expect(sql).toContain('organization_members');
+  });
+
   it('should run programmatic seed function without errors and report seeded counts', async () => {
     const report: SeedDataReport = await runSeed();
 
