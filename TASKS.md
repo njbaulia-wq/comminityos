@@ -743,12 +743,17 @@ flowchart TD
 
 ---
 
-### [ ] Task 6.5: Documents UI: File Explorer & Uploader
+### [x] Task 6.5: Documents UI: File Explorer & Uploader
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Komponen antarmuka pengguna modul Documents & Private Storage (`FolderTree`, `DocumentList`, `FileUploader`, dan `DocumentsPage`) diimplementasikan di `src/components/modules/documents/` dan `src/app/(dashboard)/[orgSlug]/documents/page.tsx`.
+  - Siklus TDD berhasil: RED (komponen & halaman belum ada), GREEN (5 unit/integration tests di `tests/unit/documents-ui.test.tsx` lolos memverifikasi hierarki navigasi folder, tampilan daftar berkas dengan pemformatan ukuran & badge tipe, dialog unggah dengan validasi client-side 25MB, dan integrasi halaman Next.js 15), REFACTOR (pemisahan elemen ikon berkas dan nama dokumen).
 - **Deskripsi:** Tampilan eksplorasi folder dokumen, daftar file dengan preview tipe ikon, dan komponen drag-and-drop file uploader dengan progress bar.
 - **Layer:** Presentation / UI Components
 - **File yang Disentuh:**
   - `src/app/(dashboard)/[orgSlug]/documents/page.tsx`
   - `src/components/modules/documents/folder-tree.tsx`
+  - `src/components/modules/documents/document-list.tsx`
   - `src/components/modules/documents/file-uploader.tsx`
   - `tests/unit/documents-ui.test.tsx`
 - **Behavior yang Mau Dibuktikan Test (RED First):**
