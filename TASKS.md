@@ -803,7 +803,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 7.3: In-App Notification Service
+### [x] Task 7.3: In-App Notification Service
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Service notifikasi internal (`createNotification`, `listNotifications`, `markAsRead`, `markAllAsRead`) diimplementasikan di `src/server/services/notification.service.ts`.
+  - Siklus TDD berhasil: RED (service belum ada), GREEN (6 integration tests di `tests/integration/notification.service.test.ts` lolos memverifikasi isolasi notifikasi khusus penerima sah, pencegahan modifikasi notifikasi orang lain via `ForbiddenError`, penandaan dibaca individual/massal, dan structured logging), REFACTOR (tata rapi interface data model).
 - **Deskripsi:** Service pengiriman notifikasi internal ke inbox anggota/pengurus (misal: tugas baru ditugaskan, iuran jatuh tempo, pengajuan pengeluaran butuh approval).
 - **Layer:** Service / Domain Logic
 - **File yang Disentuh:**
