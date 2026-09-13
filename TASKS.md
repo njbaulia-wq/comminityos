@@ -726,7 +726,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 6.4: Document Server Actions
+### [x] Task 6.4: Document Server Actions
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Endpoint Server Actions untuk dokumen (`createFolderAction`, `uploadDocumentAction`, `getSignedDownloadUrlAction`, `deleteDocumentAction`, `listDocumentsAndFoldersAction`) diimplementasikan di `src/server/actions/document.actions.ts`.
+  - Siklus TDD berhasil: RED (actions belum ada), GREEN (6 integration tests di `tests/integration/document.actions.test.ts` lolos memverifikasi isolasi envelope `ActionResult<T>`, otorisasi Admin vs Member, validasi schema, penanganan NotFound/Forbidden tanpa crash server, dan pembuatan signed URL), REFACTOR (tata rapi fallback repositories).
 - **Deskripsi:** Server Actions untuk upload berkas, buat folder, dan request download signed URL.
 - **Layer:** Presentation / Server Actions
 - **File yang Disentuh:**
