@@ -80,7 +80,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 1.3: Centralized Error Hierarchy & Result Envelope Pattern
+### [x] Task 1.3: Centralized Error Hierarchy & Result Envelope Pattern
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - `AppError` hierarki diimplementasikan di `src/lib/errors/index.ts` dan Result Envelope Pattern di `src/lib/errors/result.ts`.
+  - Siklus TDD berhasil: RED (modul belum ada), GREEN (9 unit tests lolos memverifikasi anti-leak data internal dan structured service error handling), REFACTOR (tipe `ActionResult<T>` terstandar).
 - **Deskripsi:** Membuat kelas error dasar `AppError` beserta turunan spesifiknya (`NotFoundError`, `UnauthorizedError`, `ForbiddenError`, `ValidationError`, `BusinessRuleError`, `InternalServerError`) dan tipe pembungkus `ActionResult<T>`.
 - **Layer:** Foundation / Core Standards
 - **File yang Disentuh:**
