@@ -14,6 +14,7 @@ import {
   TaskRepository,
   CallerContext,
 } from '@/server/services/task.service';
+import { validateUuidParams } from '@/lib/validation/common.schema';
 
 export interface TaskActionContext extends CallerContext {
   requestId?: string;
@@ -73,6 +74,11 @@ export async function updateTaskStatusAction(
   const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    validateUuidParams({
+      organizationId: params.organizationId,
+      taskId: params.taskId,
+    });
+
     const updated = await updateTaskStatus({
       organizationId: params.organizationId,
       taskId: params.taskId,
@@ -110,6 +116,12 @@ export async function toggleChecklistItemAction(
   const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    validateUuidParams({
+      organizationId: params.organizationId,
+      taskId: params.taskId,
+      checklistItemId: params.checklistItemId,
+    });
+
     const result = await toggleChecklistItem({
       organizationId: params.organizationId,
       taskId: params.taskId,

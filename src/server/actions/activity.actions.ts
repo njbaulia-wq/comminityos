@@ -16,6 +16,8 @@ import {
   CallerContext,
 } from '@/server/services/activity.service';
 
+import { validateUuidParams } from '@/lib/validation/common.schema';
+
 export interface ActivityActionContext extends CallerContext {
   requestId?: string;
   repo?: ActivityRepository;
@@ -73,6 +75,11 @@ export async function updateActivityAction(
   const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    validateUuidParams({
+      organizationId: params.organizationId,
+      activityId: params.activityId,
+    });
+
     const updated = await updateActivity({
       organizationId: params.organizationId,
       activityId: params.activityId,
@@ -109,6 +116,11 @@ export async function changeActivityStatusAction(
   const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    validateUuidParams({
+      organizationId: params.organizationId,
+      activityId: params.activityId,
+    });
+
     const updated = await changeActivityStatus({
       organizationId: params.organizationId,
       activityId: params.activityId,

@@ -15,6 +15,8 @@ import {
   CallerContext,
 } from '@/server/services/finance.service';
 
+import { validateUuidParams } from '@/lib/validation/common.schema';
+
 export interface FinanceActionContext extends CallerContext {
   requestId?: string;
   repo?: FinanceRepository;
@@ -69,6 +71,11 @@ export async function approveTransactionAction(
   const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    validateUuidParams({
+      organizationId: params.organizationId,
+      transactionId: params.transactionId,
+    });
+
     const approved = await approveTransaction({
       organizationId: params.organizationId,
       transactionId: params.transactionId,
@@ -103,6 +110,11 @@ export async function postTransactionAction(
   const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    validateUuidParams({
+      organizationId: params.organizationId,
+      transactionId: params.transactionId,
+    });
+
     const posted = await postTransaction({
       organizationId: params.organizationId,
       transactionId: params.transactionId,

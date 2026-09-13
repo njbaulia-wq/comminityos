@@ -15,6 +15,8 @@ import {
   CallerContext,
 } from '@/server/services/dues.service';
 
+import { validateUuidParams } from '@/lib/validation/common.schema';
+
 export interface DuesActionContext extends CallerContext {
   requestId?: string;
   repo?: DuesRepository;
@@ -106,6 +108,13 @@ export async function verifyPaymentAction(
   const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    validateUuidParams({
+      organizationId: params.organizationId,
+      paymentId: params.paymentId,
+      accountId: params.accountId,
+      ...(params.categoryId ? { categoryId: params.categoryId } : {}),
+    });
+
     const result = await verifyPayment({
       organizationId: params.organizationId,
       paymentId: params.paymentId,

@@ -18,6 +18,8 @@ import {
   CallerContext,
 } from '@/server/services/people.service';
 
+import { validateUuidParams } from '@/lib/validation/common.schema';
+
 export interface PeopleActionContext extends CallerContext {
   requestId?: string;
   repo?: PeopleRepository;
@@ -79,6 +81,11 @@ export async function updateMemberAction(
   const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    validateUuidParams({
+      organizationId: params.organizationId,
+      memberId: params.memberId,
+    });
+
     const updated = await updateMember({
       organizationId: params.organizationId,
       memberId: params.memberId,
@@ -114,6 +121,11 @@ export async function archiveMemberAction(
   const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    validateUuidParams({
+      organizationId: params.organizationId,
+      memberId: params.memberId,
+    });
+
     const result = await archiveMember({
       organizationId: params.organizationId,
       memberId: params.memberId,
@@ -179,6 +191,12 @@ export async function assignTeamMemberAction(
   const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    validateUuidParams({
+      organizationId: params.organizationId,
+      teamId: params.teamId,
+      memberId: params.memberId,
+    });
+
     const assignment = await assignTeamMember({
       organizationId: params.organizationId,
       teamId: params.teamId,

@@ -17,6 +17,8 @@ import {
   CallerContext,
 } from '@/server/services/document.service';
 
+import { validateUuidParams } from '@/lib/validation/common.schema';
+
 export interface DocumentActionContext extends CallerContext {
   requestId?: string;
   repo?: DocumentRepository;
@@ -127,6 +129,11 @@ export async function getSignedDownloadUrlAction(
   const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    validateUuidParams({
+      organizationId: params.organizationId,
+      documentId: params.documentId,
+    });
+
     const signedUrl = await getSignedDownloadUrl({
       organizationId: params.organizationId,
       documentId: params.documentId,
@@ -162,6 +169,11 @@ export async function deleteDocumentAction(
   const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    validateUuidParams({
+      organizationId: params.organizationId,
+      documentId: params.documentId,
+    });
+
     const deleted = await deleteDocument({
       organizationId: params.organizationId,
       documentId: params.documentId,
