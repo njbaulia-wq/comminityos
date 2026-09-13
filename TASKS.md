@@ -630,7 +630,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 5.7: Finance & Dues Server Actions
+### [x] Task 5.7: Finance & Dues Server Actions
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Endpoint Server Actions untuk transaksi kas dan iuran warga (`createTransactionAction`, `approveTransactionAction`, `postTransactionAction`, `createDuePlanAction`, `submitPaymentAction`, `verifyPaymentAction`) diimplementasikan di `src/server/actions/finance.actions.ts` dan `dues.actions.ts`.
+  - Siklus TDD berhasil: RED (actions belum ada), GREEN (6 integration tests di `tests/integration/finance-dues.actions.test.ts` lolos memverifikasi isolasi error result envelope `ActionResult<T>`, otorisasi multi-role Treasurer/Chair/Member, validasi nilai nominal, dan alur verifikasi iuran otomatis), REFACTOR (tata rapi fallback repositories).
 - **Deskripsi:** Server Actions untuk submit transaksi kas, approve pengeluaran, buat rencana iuran, dan verifikasi iuran.
 - **Layer:** Presentation / Server Actions
 - **File yang Disentuh:**
