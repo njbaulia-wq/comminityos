@@ -375,7 +375,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 3.5: People UI: Directory Table & Member Detail Drawer
+### [x] Task 3.5: People UI: Directory Table & Member Detail Drawer
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Komponen antarmuka pengguna modul People (`PeopleTable`, `MemberFormDialog`, `PeoplePage`) diimplementasikan di `src/components/modules/people/people-table.tsx`, `member-form-dialog.tsx`, dan `src/app/(dashboard)/[orgSlug]/people/page.tsx`.
+  - Siklus TDD berhasil: RED (komponen belum ada), GREEN (7 unit/integration tests di `tests/unit/people-ui.test.tsx` lolos memverifikasi loading skeleton, empty state, badges status kependudukan & role, callback detail, dialog pendaftaran warga, dan penanganan visual error), REFACTOR (Next.js 15 params promise handling).
 - **Deskripsi:** Komponen antarmuka pengguna untuk melihat tabel warga (filter status, role, tim, pencarian nama), serta sheet/modal untuk detail dan edit profil.
 - **Layer:** Presentation / UI Components
 - **File yang Disentuh:**
