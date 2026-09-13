@@ -280,7 +280,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 2.7: Multi-Tenant Middleware & App Layout Shell
+### [x] Task 2.7: Multi-Tenant Middleware & App Layout Shell
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Multi-tenant routing middleware diimplementasikan di `src/middleware.ts` bersama shell layout `Sidebar`, `TopBar`, dan `DashboardLayout`.
+  - Siklus TDD berhasil: RED (middleware & layout belum ada), GREEN (6 integration tests lolos memverifikasi public auth route bypass, redirect unauthenticated ke `/login?redirect=...`, redirect non-member ke `/forbidden`, dan rendering layout links), REFACTOR (resolusi tsx esbuild test).
 - **Deskripsi:** Middleware untuk memvalidasi keberadaan tenant via URL `/[orgSlug]/...`, memastikan user terotentikasi dan merupakan anggota organisasi terkait.
 - **Layer:** Presentation / Routing & Layout
 - **File yang Disentuh:**
@@ -288,7 +292,7 @@ flowchart TD
   - `src/app/(dashboard)/[orgSlug]/layout.tsx`
   - `src/components/layout/sidebar.tsx`
   - `src/components/layout/top-bar.tsx`
-  - `tests/integration/tenant-middleware.test.ts`
+  - `tests/integration/tenant-middleware.test.tsx`
 - **Behavior yang Mau Dibuktikan Test (RED First):**
   - Mengakses `/[orgSlug]/overview` tanpa login otomatis me-redirect ke `/login?redirect=...`.
   - Mengakses `/[orgSlug]/overview` milik organisasi yang bukan haknya me-redirect ke halaman 403 / Forbidden.
