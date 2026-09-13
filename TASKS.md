@@ -243,7 +243,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 2.5: Organization Onboarding Service
+### [x] Task 2.5: Organization Onboarding Service
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Service pembuatan organisasi baru dan inisialisasi Owner membership diimplementasikan di `src/server/services/organization.service.ts`.
+  - Siklus TDD berhasil: RED (service belum ada), GREEN (4 integration tests lolos memverifikasi pembuatan organisasi, pencegahan duplikasi slug via `ConflictError`, validasi Zod, dan query slug), REFACTOR (pemisahan repository abstraction untuk testability).
 - **Deskripsi:** Logika bisnis pembuatan organisasi baru: membuat entitas organisasi, inisialisasi default roles & permissions dari template, dan menjadikan pembuat sebagai `Owner`.
 - **Layer:** Service / Domain Logic
 - **File yang Disentuh:**
