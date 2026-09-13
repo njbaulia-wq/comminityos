@@ -40,7 +40,11 @@ flowchart TD
 
 ## Fase 1: Foundation, Tooling, & Core Standards
 
-### [ ] Task 1.1: Project Tooling & Test Framework Setup
+### [x] Task 1.1: Project Tooling & Test Framework Setup
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Inisialisasi Next.js 16 tooling, TypeScript strict mode (`tsconfig.json`), dan Vitest runner dengan `@/*` path alias.
+  - Siklus TDD berhasil dijalankan: RED (runner belum terpasang), GREEN (Vitest dan config dibuat & lolos 2/2 test), REFACTOR (tambahkan `.gitignore` & verify `typecheck`).
 - **Deskripsi:** Inisialisasi konfigurasi Next.js 16 (App Router), TypeScript Strict, Vitest, dan Testing Library.
 - **Layer:** Foundation / Tooling
 - **File yang Disentuh:**
