@@ -32,7 +32,13 @@ export async function runSeed(): Promise<SeedDataReport> {
     action: 'seed.completed',
     requestId,
     message: 'Pengisian data awal selesai dengan sukses',
-    context: report,
+    context: {
+      organizations: report.organizations,
+      profiles: report.profiles,
+      transactions: report.transactions,
+      activities: report.activities,
+      tasks: report.tasks,
+    },
   });
 
   return report;

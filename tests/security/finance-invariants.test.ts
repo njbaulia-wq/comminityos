@@ -85,7 +85,7 @@ describe('Finance Invariant & Anti-Tampering Test Suite', () => {
       const mockDuesRepo: DuesRepository = {
         createDuePlan: vi.fn(),
         findDuePlanById: vi.fn().mockResolvedValue({ id: 'plan-1', title: 'Iuran Warga' }),
-        createDueItemsBatch: vi.fn(),
+        createDueItems: vi.fn(),
         findDueItemById: vi.fn().mockImplementation(async () => ({
           id: 'item-1',
           organizationId: orgId,
