@@ -648,7 +648,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 5.8: Finance & Dues UI: Cash Register & Dues Matrix
+### [x] Task 5.8: Finance & Dues UI: Cash Register & Dues Matrix
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Komponen antarmuka pengguna modul Finance & Dues (`TransactionTable`, `DuesTracker`, `PaymentVerifyDialog`, dan `FinancePage`) diimplementasikan di `src/components/modules/finance/` dan `src/app/(dashboard)/[orgSlug]/finance/page.tsx`.
+  - Siklus TDD berhasil: RED (komponen & halaman belum ada), GREEN (7 unit/integration tests di `tests/unit/finance-ui.test.tsx` lolos memverifikasi kartu ringkasan saldo kas berformat Rupiah presisi, penguncian baris transaksi `posted` tanpa opsi ubah, rendering tabel tagihan iuran & verifikasi bukti bayar), REFACTOR (Next.js 15 async route param resolution).
 - **Deskripsi:** Tampilan dashboard kas (ringkasan saldo, chart pemasukan vs pengeluaran), tabel mutasi transaksi, filter kategori, dan tabel tracking iuran warga dengan modal verifikasi bukti bayar.
 - **Layer:** Presentation / UI Components
 - **File yang Disentuh:**
