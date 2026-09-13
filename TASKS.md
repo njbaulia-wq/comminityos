@@ -671,12 +671,16 @@ flowchart TD
 
 ## Fase 6: Documents & Private Storage
 
-### [ ] Task 6.1: Database Migration: Document Hierarchy & Supabase Storage
+### [x] Task 6.1: Database Migration: Document Hierarchy & Supabase Storage
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Migrasi PostgreSQL modul Documents & Private Storage diimplementasikan di `supabase/migrations/20260913000007_documents_storage.sql` (tabel document_folders dengan parent_id self-referencing, tabel documents dengan metadata storage, registrasi bucket privat org-documents & payment-proofs, serta RLS).
+  - Siklus TDD berhasil: RED (file migrasi belum ada), GREEN (6 integration tests di `tests/integration/document-schema.test.ts` lolos memverifikasi pembuatan tabel, foreign keys, bucket storage privat, cascade/restrict constraints, dan RLS policies), REFACTOR (tata rapi atomic transaction block).
 - **Deskripsi:** Migrasi SQL untuk tabel `document_folders`, `documents`, dan konfigurasi security policies untuk Supabase Storage bucket (`org-documents` dan `payment-proofs`).
 - **Layer:** Data Access / Database & Storage
 - **File yang Disentuh:**
   - `supabase/migrations/20260913000007_documents_storage.sql`
-  - `tests/integration/storage-policies.test.ts`
+  - `tests/integration/document-schema.test.ts`
 - **Behavior yang Mau Dibuktikan Test (RED First):**
   - File yang diunggah ke folder organisasi hanya dapat diakses oleh anggota organisasi tersebut.
   - Bucket bukti bayar (`payment-proofs`) menolak akses publik (harus private).
