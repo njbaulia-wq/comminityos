@@ -784,11 +784,16 @@ flowchart TD
 
 ---
 
-### [ ] Task 7.2: Immutable Audit Log Dispatcher Service
+### [x] Task 7.2: Immutable Audit Log Dispatcher Service
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Service terpusat perekam audit log (`dispatchAuditLog`, `listAuditLogs`) diimplementasikan di `src/server/services/audit.service.ts`.
+  - Siklus TDD berhasil: RED (service belum ada), GREEN (4 integration tests di `tests/integration/audit.service.test.ts` lolos memverifikasi isolasi eksekusi non-fatal / resilient error logging saat penulisan database gagal tanpa membatalkan transaksi bisnis utama, pencatatan metadata aktor/entitas, otorisasi `audit.read`), REFACTOR (tata rapi structured metadata context).
 - **Deskripsi:** Service terpusat untuk mencatat rekaman audit terhadap peristiwa penting organisasi (perubahan role, approval pengeluaran, mutasi kas, penghapusan data warga).
 - **Layer:** Service / Audit Trail
 - **File yang Disentuh:**
   - `src/server/services/audit.service.ts`
+  - `src/server/services/permission.service.ts`
   - `tests/integration/audit.service.test.ts`
 - **Behavior yang Mau Dibuktikan Test (RED First):**
   - Memastikan pencatatan audit log tidak boleh menggagalkan transaksi utama (*decoupled / resilient execution*).
