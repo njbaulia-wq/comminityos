@@ -864,7 +864,11 @@ flowchart TD
 
 ## Fase 8: Hardening, Security Test Suite, & Production Readiness
 
-### [ ] Task 8.1: Multi-Tenant RLS Security Test Suite (Cross-Tenant Leak Prevention)
+### [x] Task 8.1: Multi-Tenant RLS Security Test Suite (Cross-Tenant Leak Prevention)
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Suite pengujian keamanan multi-tenant RLS diimplementasikan di `tests/security/rls-matrix.test.ts`.
+  - Siklus pengujian berhasil: 4 security test cases lolos memverifikasi seluruh 17 tabel data penyewa (`organizations`, `organization_members`, `profiles`, `teams`, `activities`, `tasks`, `accounts`, `transactions`, `due_plans`, `due_items`, `payments`, `document_folders`, `documents`, `audit_logs`, `notifications`) mengaktifkan RLS tanpa celah public select, serta mensimulasikan engine cross-tenant leak pencegahan kueri & penolakan mutasi insert lintas tenant.
 - **Deskripsi:** Suite pengujian keamanan komprehensif yang menguji seluruh tabel aplikasi terhadap potensi kebocoran data antar-organisasi.
 - **Layer:** Security / Integration Testing
 - **File yang Disentuh:**
