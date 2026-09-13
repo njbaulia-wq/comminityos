@@ -452,7 +452,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 4.4: Task Domain Service with State Transitions
+### [x] Task 4.4: Task Domain Service with State Transitions
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Service logika bisnis tugas (`createTask`, `updateTask`, `updateTaskStatus`, `addChecklistItem`, `toggleChecklistItem`, `listTasks`) diimplementasikan di `src/server/services/task.service.ts`.
+  - Siklus TDD berhasil: RED (service belum ada), GREEN (6 integration tests di `tests/integration/task.service.test.ts` lolos memverifikasi verifikasi keanggotaan aktif assignee via `BusinessRuleError`, otorisasi `tasks.manage`, penandaan `completed_at` saat task selesai, serta kalkulasi otomatis seluruh checklist selesai), REFACTOR (tata rapi structured logger metadata).
 - **Deskripsi:** Service logika bisnis pengelolaan tugas: penugasan task ke anggota, update checklist, dan transisi status task (*todo -> in_progress -> done*).
 - **Layer:** Service / Domain Logic
 - **File yang Disentuh:**
