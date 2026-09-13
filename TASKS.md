@@ -60,7 +60,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 1.2: Centralized Structured JSON Logger
+### [x] Task 1.2: Centralized Structured JSON Logger
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Utilitas structured JSON logger diimplementasikan di `src/lib/logger/index.ts` dan PII masking di `src/lib/logger/masking.ts`.
+  - Siklus TDD berhasil: RED (modul belum ada), GREEN (deep recursive masking & fail-safe JSON streaming lolos 6/6 test), REFACTOR (resolusi tipe TypeScript strict).
 - **Deskripsi:** Mengimplementasikan logger terpusat yang menghasilkan format JSON standar (timestamp, level, module, requestId, organizationId, userId, message, context) dengan sanitasi/masking PII (kata sandi, NIK, token).
 - **Layer:** Foundation / Shared Infrastructure
 - **File yang Disentuh:**
