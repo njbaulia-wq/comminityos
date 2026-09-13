@@ -609,7 +609,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 5.6: Dues Domain Service with Automated Cash Ledger Posting
+### [x] Task 5.6: Dues Domain Service with Automated Cash Ledger Posting
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Service logika bisnis iuran (`createDuePlan`, `submitPayment`, `verifyPayment`) diimplementasikan di `src/server/services/dues.service.ts`.
+  - Siklus TDD berhasil: RED (service belum ada), GREEN (6 integration tests di `tests/integration/dues.service.test.ts` lolos memverifikasi pembuatan rencana iuran berotorisasi, penyerahan bukti pembayaran dengan status pending_verification, pencegahan double payment via `BusinessRuleError`, dan eksekusi atomik verifikasi yang otomatis membukukan kas masuk & mengupdate saldo kas), REFACTOR (tata rapi atomic verifier interface).
 - **Deskripsi:** Service pembuatan rencana iuran warga, penjadwalan tagihan, unggah bukti bayar warga, dan verifikasi bendahara yang otomatis mencatat mutasi kas masuk.
 - **Layer:** Service / Domain Logic
 - **File yang Disentuh:**
