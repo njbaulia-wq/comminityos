@@ -261,7 +261,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 2.6: Auth & Organization Server Actions
+### [x] Task 2.6: Auth & Organization Server Actions
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Server Actions untuk pembuatan organisasi (`createOrganizationAction`) dan autentikasi (`loginAction`, `signupAction`) diimplementasikan di `src/server/actions/organization.actions.ts` dan `auth.actions.ts`.
+  - Siklus TDD berhasil: RED (actions belum ada), GREEN (4 integration tests lolos memverifikasi payload Result envelope, validasi error mapping tanpa crash, dan structured error logging), REFACTOR (resolusi context dependency injection).
 - **Deskripsi:** Server Actions sebagai antarmuka mutasi dari formulir UI untuk login, signup, dan pembuatan organisasi.
 - **Layer:** Presentation / Server Actions
 - **File yang Disentuh:**
