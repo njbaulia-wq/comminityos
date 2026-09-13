@@ -119,13 +119,18 @@ flowchart TD
 
 ---
 
-### [ ] Task 1.5: Supabase Client Infrastructure (SSR, Browser, Middleware)
+### [x] Task 1.5: Supabase Client Infrastructure (SSR, Browser, Middleware)
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Konfigurasi Supabase client resmi `@supabase/ssr` diimplementasikan di `client.ts`, `server.ts`, `middleware.ts`, dan proteksi service-role admin di `admin.ts`.
+  - Siklus TDD berhasil: RED (modul belum ada), GREEN (2 unit tests lolos memverifikasi browser client & protected admin client), REFACTOR (cookie store adapter typed dan safe error fallback).
 - **Deskripsi:** Konfigurasi Supabase client resmi untuk Next.js App Router (`@supabase/ssr`) yang mengelola cookie session secara aman di Server Components, Server Actions, Route Handlers, dan Middleware.
 - **Layer:** Foundation / Persistence Client
 - **File yang Disentuh:**
   - `src/lib/supabase/client.ts`
   - `src/lib/supabase/server.ts`
   - `src/lib/supabase/middleware.ts`
+  - `src/lib/supabase/admin.ts`
   - `tests/unit/supabase-client.test.ts`
 - **Behavior yang Mau Dibuktikan Test (RED First):**
   - Pembuatan client server membaca cookies request dengan benar.
