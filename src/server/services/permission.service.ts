@@ -14,6 +14,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'tasks.manage',
     'documents.read',
     'documents.manage',
+    'audit.read',
     'settings.manage',
   ],
   Admin: [
@@ -28,6 +29,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'tasks.manage',
     'documents.read',
     'documents.manage',
+    'audit.read',
     'settings.manage',
   ],
   Chair: [
@@ -38,6 +40,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'tasks.manage',
     'documents.read',
     'documents.manage',
+    'audit.read',
   ],
   'Vice Chair': [
     'members.read',
@@ -47,6 +50,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'tasks.manage',
     'documents.read',
     'documents.manage',
+    'audit.read',
   ],
   Secretary: [
     'members.read',
@@ -55,6 +59,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'tasks.manage',
     'documents.read',
     'documents.manage',
+    'audit.read',
   ],
   Treasurer: [
     'members.read',
