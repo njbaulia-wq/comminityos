@@ -303,7 +303,11 @@ flowchart TD
 
 ## Fase 3: People Module (Anggota & Warga)
 
-### [ ] Task 3.1: Database Migration: People & Teams Schema
+### [x] Task 3.1: Database Migration: People & Teams Schema
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Migrasi PostgreSQL modul People & Teams diimplementasikan di `supabase/migrations/20260913000003_people_schema.sql` (tabel teams, team_members, demografi warga, dan RLS).
+  - Siklus TDD berhasil: RED (file migrasi belum ada), GREEN (6 integration tests lolos memverifikasi pembuatan tabel, foreign keys, alter profiles fields, dan RLS security definer policies), REFACTOR (penegakan atomic transaction block).
 - **Deskripsi:** Migrasi SQL untuk tabel `teams`, penambahan field pendataan warga pada `profiles` (alamat, no rumah, RT/RW, no HP, status warga), dan relasi `team_members`.
 - **Layer:** Data Access / Database Schema
 - **File yang Disentuh:**
