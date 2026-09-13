@@ -838,7 +838,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 7.5: Overview Dashboard UI (Command Center)
+### [x] Task 7.5: Overview Dashboard UI (Command Center)
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Komponen command center overview (`ActionQueue`, `FinanceSnapshot`, `UpcomingAgenda`, dan `OverviewPage`) diimplementasikan di `src/components/modules/dashboard/` dan `src/app/(dashboard)/[orgSlug]/overview/page.tsx`.
+  - Siklus TDD berhasil: RED (komponen belum ada), GREEN (5 unit/integration tests di `tests/unit/dashboard-ui.test.tsx` lolos memverifikasi antrean persetujuan dengan prioritas, snapshot saldo kas & persentase kepatuhan iuran, agenda kegiatan terdekat & task mendesak, serta integrasi halaman overview Next.js 15), REFACTOR (pemisahan span ikon indikator).
 - **Deskripsi:** Halaman ringkasan utama organisasi:
   1. *Action Queue* (Daftar persetujuan tertunda bagi Ketua/Bendahara).
   2. *Agenda & Deadlines* (Kegiatan aktif terdekat & task mendesak).
