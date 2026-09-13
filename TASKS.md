@@ -184,7 +184,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 2.2: Row-Level Security (RLS) Multi-Tenant Policies
+### [x] Task 2.2: Row-Level Security (RLS) Multi-Tenant Policies
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Kebijakan PostgreSQL Row-Level Security (RLS) untuk multi-tenancy diimplementasikan di `supabase/migrations/20260913000002_core_rls.sql`.
+  - Siklus TDD berhasil: RED (file migrasi RLS belum ada), GREEN (6 integration tests lolos memverifikasi RLS enablement, fungsi helper get_auth_user_org_ids, proteksi admin update, dan isolasi profile antar tenant), REFACTOR (standarisasi security definer functions).
 - **Deskripsi:** Menerapkan RLS pada tabel identitas dan organisasi agar data terisolasi ketat berdasarkan `organization_id` dan otentikasi JWT Supabase.
 - **Layer:** Data Access / Database Security
 - **File yang Disentuh:**
