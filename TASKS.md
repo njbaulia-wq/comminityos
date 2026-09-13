@@ -512,7 +512,11 @@ flowchart TD
 
 ## Fase 5: Finance & Dues Ledger (Domain Kritis)
 
-### [ ] Task 5.1: Database Migration: Finance Ledger & Dues Schema
+### [x] Task 5.1: Database Migration: Finance Ledger & Dues Schema
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Migrasi PostgreSQL modul Finance & Dues diimplementasikan di `supabase/migrations/20260913000005_finance_ledger.sql` (tabel accounts, transaction_categories, transactions, due_plans, due_items, payments, dan RLS).
+  - Siklus TDD berhasil: RED (file migrasi belum ada), GREEN (7 integration tests di `tests/integration/finance-schema.test.ts` lolos memverifikasi pelarangan tipe float dengan penegakan `numeric(14,2)`, constraint nominal positif, status transaksi, relasi iuran ke mutasi kas, dan RLS policies), REFACTOR (tata rapi foreign key CASCADE / RESTRICT).
 - **Deskripsi:** Migrasi SQL untuk tabel: `accounts` (kas/bank), `transaction_categories`, `transactions`, `due_plans` (rencana iuran), `due_items` (tagihan per anggota), dan `payments`.
 - **Layer:** Data Access / Database Schema
 - **File yang Disentuh:**
