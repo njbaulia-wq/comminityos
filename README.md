@@ -301,20 +301,61 @@ comminityos/
 
 ---
 
-## 8. Verifikasi Kualitas & Perintah Pengujian
+## 8. Panduan Deployment ke Vercel (Production-Ready)
+
+Aplikasi **Community OS** telah dioptimalkan secara arsitektural untuk langsung dideploy ke platform [Vercel](https://vercel.com):
+
+### Langkah 1: Hubungkan Repositori GitHub ke Vercel
+1. Masuk ke dasbor [Vercel](https://vercel.com/dashboard) dan klik tombol **"Add New..."** → **"Project"**.
+2. Pilih repositori GitHub: `njbaulia-wq/comminityos`.
+3. Vercel akan otomatis mengenali proyek sebagai **Next.js** melalui konfigurasi [`vercel.json`](file:///workspaces/comminityos/vercel.json).
+
+### Langkah 2: Konfigurasi Environment Variables di Vercel
+Buka bagian **Environment Variables** pada halaman konfigurasi proyek Vercel, lalu tambahkan variabel berikut:
+
+| Nama Variabel | Sumber Nilai (Supabase Dashboard) | Lingkungan |
+| :--- | :--- | :--- |
+| `NEXT_PUBLIC_SUPABASE_URL` | **Project Settings** → **API** → *Project URL* | Production, Preview, Development |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | **Project Settings** → **API** → *Project API Keys* (`anon` / `public`) | Production, Preview, Development |
+| `SUPABASE_SERVICE_ROLE_KEY` | **Project Settings** → **API** → *Project API Keys* (`service_role` secret) | Production, Preview, Development |
+| `NEXT_PUBLIC_APP_URL` | Domain Vercel Anda (misal: `https://comminityos.vercel.app`) | Production, Preview |
+
+> [!IMPORTANT]
+> Jangan pernah membagikan nilai `SUPABASE_SERVICE_ROLE_KEY` ke publik atau client-side. Server Actions dan PostgREST client pada Community OS telah diproteksi agar service role hanya berjalan di Server / Edge Runtime.
+
+### Langkah 3: Siapkan Database di Supabase
+Sebelum deploy aktif, pastikan 8 migrasi SQL pada direktori `supabase/migrations/` telah dijalankan di **Supabase SQL Editor**:
+1. `20260913000001_core_identity.sql`
+2. `20260913000002_core_rls.sql`
+3. `20260913000003_people_schema.sql`
+4. `20260913000004_activities_tasks.sql`
+5. `20260913000005_finance_ledger.sql`
+6. `20260913000006_finance_immutability.sql`
+7. `20260913000007_documents_storage.sql`
+8. `20260913000008_audit_notifications.sql`
+
+*(Opsional)* Jalankan [`supabase/seed.sql`](file:///workspaces/comminityos/supabase/seed.sql) jika ingin langsung mengisi data awal demo komunitas Indonesia realistis (RT 05 RW 02 & Karang Taruna).
+
+### Langkah 4: Klik "Deploy"
+Klik **"Deploy"**. Vercel akan menjalankan `npm install` dan `npm run build` secara otomatis. Aplikasi akan langsung tayang (*live*) dengan status production-ready!
+
+---
+
+## 9. Verifikasi Kualitas & Perintah Pengujian
 
 Proyek ini menerapkan standar **100% Automated Testing** dan verifikasi tipe yang ketat:
 
 | Perintah | Deskripsi | Status Hasil |
 | :--- | :--- | :--- |
-| `npm test` | Menjalankan seluruh test suite otomatis (53 berkas test) via Vitest | **322 passed (100%)** |
+| `npm test` | Menjalankan seluruh test suite otomatis (53 berkas test) via Vitest | **323 passed (100%)** |
 | `npm run typecheck` | Menjalankan verifikasi tipe TypeScript tanpa kompilasi (`tsc --noEmit`) | **0 errors** |
+| `npm run lint` | Menjalankan pengecekan tipe dan sintaksis kode | **0 errors** |
 | `npm run build` | Menjalankan kompilasi Next.js App Router Turbopack untuk produksi | **Sukses (12 rute optimal)** |
 | `npm start` | Menjalankan server Next.js production build secara lokal | Siap melayani traffic |
 
 ---
 
-## 9. Matriks Hak Akses & Peran (Role-Based Access Control)
+## 10. Matriks Hak Akses & Peran (Role-Based Access Control)
 
 | Modul / Izin | Owner | Admin | Ketua (Chair) | Sekretaris | Bendahara | Koordinator | Anggota |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -334,7 +375,7 @@ Proyek ini menerapkan standar **100% Automated Testing** dan verifikasi tipe yan
 
 ---
 
-## 10. Lisensi & Kontribusi
+## 11. Lisensi & Kontribusi
 
 Proyek ini didistribusikan di bawah lisensi **MIT License**. Silakan gunakan, pelajari, dan kembangkan untuk mendukung kemandirian dan transparansi organisasi lokal di seluruh Indonesia.
 
