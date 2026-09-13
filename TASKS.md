@@ -531,7 +531,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 5.2: PostgreSQL Invariants: Posted Transaction Immutability
+### [x] Task 5.2: PostgreSQL Invariants: Posted Transaction Immutability
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Database trigger function `prevent_posted_transaction_modification()` dan trigger `trg_posted_transaction_immutable` diimplementasikan di `supabase/migrations/20260913000006_finance_immutability.sql`.
+  - Siklus TDD berhasil: RED (file migrasi belum ada), GREEN (4 integration tests di `tests/integration/finance-immutability.test.ts` lolos memverifikasi pencegahan mutasi UPDATE/DELETE pada baris transaksi berstatus `posted` dengan eksepsi eksplisit `Cannot modify a posted transaction`), REFACTOR (penegakan atomic transaction block).
 - **Deskripsi:** Database trigger & fungsi PostgreSQL yang mencegah perubahan atau penghapusan data secara langsung pada baris tabel `transactions` yang berstatus `posted`.
 - **Layer:** Data Access / Database Integrity
 - **File yang Disentuh:**
