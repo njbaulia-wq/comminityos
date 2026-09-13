@@ -898,7 +898,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 8.3: Realistic Indonesian Community Seed Data Script
+### [x] Task 8.3: Realistic Indonesian Community Seed Data Script
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Script SQL seed data dan programmatic runner diimplementasikan di `supabase/seed.sql` dan `src/server/db/seed.ts`.
+  - Siklus TDD berhasil: RED (runner belum ada), GREEN (5 integration tests di `tests/integration/seed-integrity.test.ts` lolos memverifikasi pembuatan 2 organisasi realistis RT 05 RW 02 dan Karang Taruna Muda Berkarya, profil warga berdemografi lokal, akun buku kas balance, tagihan iuran, kegiatan 17 Agustus & penugasan task, serta structured reporting via `logger.info`), REFACTOR (tata rapi report interface).
 - **Deskripsi:** Script pengisian data awal (*seeding*) yang mencerminkan kasus nyata di Indonesia:
   - Organisasi 1: RT 05 RW 02 Kelurahan Sukamaju (Template RT).
   - Organisasi 2: Karang Taruna Muda Berkarya (Template Karang Taruna).
