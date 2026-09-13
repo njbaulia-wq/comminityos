@@ -322,7 +322,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 3.2: Zod Schemas for People Management
+### [x] Task 3.2: Zod Schemas for People Management
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Skema Zod untuk modul People (`CreateMemberSchema`, `UpdateMemberSchema`, `CreateTeamSchema`, `AssignTeamMemberSchema`) diimplementasikan di `src/lib/validation/people.schema.ts`.
+  - Siklus TDD berhasil: RED (skema belum ada), GREEN (6 unit tests di `tests/unit/validation-people.test.ts` lolos memverifikasi validasi nama, nomor telepon Indonesia opsional, NIK/KK opsional, dan role ID UUID), REFACTOR (inferensi tipe terstruktur).
 - **Deskripsi:** Skema validasi untuk pembuatan profil anggota (baik anggota ber-akun maupun shadow profile warga), update data, dan pembuatan team.
 - **Layer:** Service / Validation Boundary
 - **File yang Disentuh:**
