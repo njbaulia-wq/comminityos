@@ -222,7 +222,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 2.4: RBAC Permission Resolver Service
+### [x] Task 2.4: RBAC Permission Resolver Service
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Service evaluasi permission RBAC diimplementasikan di `src/server/services/permission.service.ts` dengan matriks role default dan fungsi `hasPermission`/`assertPermission`.
+  - Siklus TDD berhasil: RED (service belum ada), GREEN (6 unit tests lolos memverifikasi isolasi role, pencegahan unauthorized action via `ForbiddenError`, dan logging structured warn), REFACTOR (tipe parameter terstruktur).
 - **Deskripsi:** Service untuk mengevaluasi hak akses user dalam konteks organisasi (`hasPermission(userId, orgId, permissionKey)`).
 - **Layer:** Service / Authorization
 - **File yang Disentuh:**
