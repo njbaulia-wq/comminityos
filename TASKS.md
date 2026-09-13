@@ -434,7 +434,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 4.3: Activity Domain Service
+### [x] Task 4.3: Activity Domain Service
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Service logika bisnis kegiatan (`createActivity`, `updateActivity`, `changeActivityStatus`, `assignActivityMember`, `getActivity`, `listActivities`) diimplementasikan di `src/server/services/activity.service.ts`.
+  - Siklus TDD berhasil: RED (service belum ada), GREEN (8 integration tests di `tests/integration/activity.service.test.ts` lolos memverifikasi otorisasi `activities.manage`, penguncian modifikasi kegiatan selesai/dibatalkan via `BusinessRuleError`, transisi siklus hidup, dan panitia penugasan), REFACTOR (standarisasi parseValidationErrors).
 - **Deskripsi:** Service logika bisnis untuk perencanaan kegiatan, penugasan PIC, pemantauan status, dan penguncian kegiatan yang telah selesai.
 - **Layer:** Service / Domain Logic
 - **File yang Disentuh:**
