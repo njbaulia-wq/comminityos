@@ -919,14 +919,22 @@ flowchart TD
 
 ---
 
-### [ ] Task 8.4: Pre-Flight Verification & Production Checklist
+### [x] Task 8.4: Pre-Flight Verification & Production Checklist
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Global error boundaries (`src/app/error.tsx`, `src/app/global-error.tsx`, `src/app/not-found.tsx`) diimplementasikan dengan UI ramah pengguna berbahasa Indonesia, tombol coba lagi/muat ulang, penangkapan error ke `logger.error`, serta validasi rilis produksi.
+  - Siklus TDD berhasil: RED (halaman error & 404 belum ada), GREEN (3 unit tests di `tests/unit/preflight.test.tsx` lolos memverifikasi penangkapan error runtime, recovery reset, dan link navigasi 404), REFACTOR (tata rapi kode pelaporan digest).
+  - Verifikasi Pre-Flight Penuh:
+    - `npm run build` sukses mengompilasi dan mengoptimasi seluruh 8 dynamic route dan proxy middleware tanpa peringatan TypeScript.
+    - `npx tsc --noEmit` bersih (0 error).
+    - `npm test` mencapai status **100% PASSED** (46 test suites, 284 tests passed).
 - **Deskripsi:** Verifikasi kesiapan rilis produksi: verifikasi build Next.js (`npm run build`), audit accessibility (ARIA attributes), verifikasi error boundaries global, dan bundle size analysis.
 - **Layer:** Quality Assurance / Pre-flight
 - **File yang Disentuh:**
   - `src/app/error.tsx`
   - `src/app/global-error.tsx`
   - `src/app/not-found.tsx`
-  - `tests/e2e/preflight.test.ts`
+  - `tests/unit/preflight.test.tsx`
 - **Behavior yang Mau Dibuktikan Test (RED First):**
   - Error runtime di halaman manapun ditangkap oleh `error.tsx` dengan UI fallback berbahasa Indonesia dan tombol "Coba Lagi" (*Reset*).
   - Halaman 404 menampilkan panduan kembali ke dashboard organisasi.
