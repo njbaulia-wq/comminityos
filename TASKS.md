@@ -470,7 +470,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 4.5: Activities & Tasks Server Actions
+### [x] Task 4.5: Activities & Tasks Server Actions
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Endpoint Server Actions untuk kegiatan dan tugas (`createActivityAction`, `updateActivityAction`, `changeActivityStatusAction`, `createTaskAction`, `updateTaskStatusAction`, `toggleChecklistItemAction`) diimplementasikan di `src/server/actions/activity.actions.ts` dan `task.actions.ts`.
+  - Siklus TDD berhasil: RED (actions belum ada), GREEN (8 integration tests di `tests/integration/activity-task.actions.test.ts` lolos memverifikasi isolasi error result envelope `ActionResult<T>`, validasi schema, otorisasi, penegakan business rule violation, dan toggle checklist), REFACTOR (standarisasi action context dan structured fallback).
 - **Deskripsi:** Server Actions penghubung UI untuk mutasi kegiatan dan task.
 - **Layer:** Presentation / Server Actions
 - **File yang Disentuh:**
