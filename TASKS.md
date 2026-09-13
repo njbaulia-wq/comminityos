@@ -689,7 +689,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 6.2: Document Validation Schemas & Upload Constraints
+### [x] Task 6.2: Document Validation Schemas & Upload Constraints
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Skema Zod modul Documents & Private Storage (`CreateFolderSchema`, `UploadDocumentSchema`, `GetSignedUrlSchema`, batasan MIME dan ukuran berkas 25MB/5MB) diimplementasikan di `src/lib/validation/document.schema.ts`.
+  - Siklus TDD berhasil: RED (skema belum ada), GREEN (8 unit tests di `tests/unit/validation-document.test.ts` lolos memverifikasi penolakan tipe file berbahaya/tidak didukung, penolakan ukuran melebihi 25MB, proteksi nama folder terhadap path traversal, dan batasan masa berlaku signed URL), REFACTOR (tipe input & output inferensi).
 - **Deskripsi:** Skema validasi untuk upload berkas: pembatasan tipe MIME (PDF, PNG, JPG, JPEG), ukuran maksimal file (5MB untuk bukti transfer, 25MB untuk dokumen), dan penamaan folder.
 - **Layer:** Service / Validation Boundary
 - **File yang Disentuh:**
@@ -698,7 +702,7 @@ flowchart TD
 - **Behavior yang Mau Dibuktikan Test (RED First):**
   - Menolak file berekstensi berbahaya (misal: `.exe`, `.sh`, `.html`).
   - Menolak file berukuran melampaui limit yang ditentukan.
-- **Error Handling:** Melempar `ValidationError` ("Tipe berkas tidak didukung" atau "Ukuran berkas melebihi batas 5MB").
+- **Error Handling:** Melempar `ValidationError` ("Tipe berkas tidak didukung" atau "Ukuran berkas melebihi batas 25MB").
 - **Logging:** Dicatat di layer service.
 
 ---
