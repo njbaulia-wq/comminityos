@@ -488,7 +488,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 4.6: Activities & Tasks UI: Views & Board
+### [x] Task 4.6: Activities & Tasks UI: Views & Board
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Komponen antarmuka pengguna modul Activities & Tasks (`TaskCard`, `TaskBoard`, `ActivitiesPage`, `ActivityDetailPage`, `TasksPage`) diimplementasikan di `src/components/modules/tasks/` dan `src/app/(dashboard)/[orgSlug]/`.
+  - Siklus TDD berhasil: RED (komponen UI belum ada), GREEN (7 unit/integration tests di `tests/unit/task-ui.test.tsx` lolos memverifikasi kartu task dengan badge prioritas/checklist, pembagian 3 kolom kanban To Do/In Progress/Done, empty state board, halaman agenda, dan detail kegiatan), REFACTOR (resolusi Next.js 15 route parameters).
 - **Deskripsi:** Halaman daftar kegiatan, detail kegiatan dengan tab tugas, serta tampilan Task Kanban Board & List.
 - **Layer:** Presentation / UI Components
 - **File yang Disentuh:**
