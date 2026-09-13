@@ -766,7 +766,11 @@ flowchart TD
 
 ## Fase 7: Audit Trail, Notifications, & Overview Dashboard
 
-### [ ] Task 7.1: Database Migration: Audit Logs & Notifications Schema
+### [x] Task 7.1: Database Migration: Audit Logs & Notifications Schema
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Migrasi PostgreSQL modul Audit Trail & Notifikasi diimplementasikan di `supabase/migrations/20260913000008_audit_notifications.sql` (tabel append-only `audit_logs`, trigger kekekalan `trg_audit_logs_immutable`, tabel `notifications`, dan kebijakan RLS multi-tenant).
+  - Siklus TDD berhasil: RED (file migrasi belum ada), GREEN (6 integration tests di `tests/integration/audit-notifications-schema.test.ts` lolos memverifikasi pencegahan operasi UPDATE/DELETE pada log audit, struktur JSONB metadata, status is_read notifikasi, dan isolasi penyewa), REFACTOR (tata rapi atomic transaction block).
 - **Deskripsi:** Migrasi SQL untuk tabel `audit_logs` (immutable table: actor, action, entity_type, entity_id, diff/metadata, ip, timestamp) dan `notifications`.
 - **Layer:** Data Access / Database Schema
 - **File yang Disentuh:**
