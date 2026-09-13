@@ -587,7 +587,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 5.5: Finance Ledger Domain Service
+### [x] Task 5.5: Finance Ledger Domain Service
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Service logika bisnis buku kas (`createTransaction`, `approveTransaction`, `postTransaction`) diimplementasikan di `src/server/services/finance.service.ts`.
+  - Siklus TDD berhasil: RED (service belum ada), GREEN (7 integration tests di `tests/integration/finance.service.test.ts` lolos memverifikasi ambang batas persetujuan pengeluaran besar, otorisasi Chair/Treasurer, kalkulasi saldo presisi tinggi, proteksi double-posting via `BusinessRuleError`, dan structured log `finance.transaction_posted`), REFACTOR (utilitas ambang batas terkonfigurasi).
 - **Deskripsi:** Service pencatatan transaksi kas, pengajuan pengeluaran, persetujuan oleh Ketua (`finance.approve`), dan pembukuan resmi (`finance.post`).
 - **Layer:** Service / Domain Logic
 - **File yang Disentuh:**
