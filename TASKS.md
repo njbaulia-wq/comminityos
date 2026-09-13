@@ -415,7 +415,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 4.2: Zod Schemas for Activities & Tasks
+### [x] Task 4.2: Zod Schemas for Activities & Tasks
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Skema Zod untuk modul Activities & Tasks (`CreateActivitySchema`, `UpdateActivitySchema`, `CreateTaskSchema`, `UpdateTaskSchema`, `CreateChecklistItemSchema`) diimplementasikan di `src/lib/validation/activity.schema.ts` dan `task.schema.ts`.
+  - Siklus TDD berhasil: RED (skema belum ada), GREEN (9 unit tests di `tests/unit/validation-activity-task.test.ts` lolos memverifikasi aturan tanggal selesai vs tanggal mulai, anggaran non-negatif, status/prioritas enum, dan checklist), REFACTOR (pemisahan boundary type input dan output).
 - **Deskripsi:** Skema validasi untuk create/update kegiatan (judul, deskripsi, tanggal mulai/selesai, PIC, estimasi anggaran) dan tasks (judul, prioritas, assignee, due date).
 - **Layer:** Service / Validation Boundary
 - **File yang Disentuh:**
