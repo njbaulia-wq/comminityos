@@ -569,7 +569,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 5.4: Currency & Financial Calculator Utilities
+### [x] Task 5.4: Currency & Financial Calculator Utilities
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Utilitas keuangan dan perhitungan presisi tinggi (`formatIDR`, `parseIDR`, `addMoney`, `subtractMoney`, `calculateLedgerBalance`) diimplementasikan di `src/lib/utils/currency.ts`.
+  - Siklus TDD berhasil: RED (utilitas belum ada), GREEN (7 unit tests di `tests/unit/currency.test.ts` lolos memverifikasi pemformatan Rupiah, parsing string uang ke angka, eliminasi error floating-point JS, dan kalkulasi saldo mutasi buku kas), REFACTOR (penanganan boundary non-numeric).
 - **Deskripsi:** Utilitas perhitungan keuangan presisi tinggi (mencegah floating-point rounding error) dan pemformat mata uang Rupiah (`IDR`).
 - **Layer:** Foundation / Utilities
 - **File yang Disentuh:**
