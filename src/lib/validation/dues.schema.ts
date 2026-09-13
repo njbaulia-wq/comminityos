@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { safeTextSchema, uuidSchema } from './common.schema';
 
 export const DueFrequencyEnum = z.enum(['monthly', 'one_time', 'yearly']);
 export type DueFrequency = z.infer<typeof DueFrequencyEnum>;
@@ -15,13 +16,8 @@ export const PaymentMethodEnum = z.enum(['cash', 'transfer']);
 export type PaymentMethod = z.infer<typeof PaymentMethodEnum>;
 
 export const CreateDuePlanSchema = z.object({
-  organizationId: z
-    .string({ required_error: 'Organization ID wajib diisi' })
-    .uuid('Organization ID tidak valid'),
-  title: z
-    .string({ required_error: 'Nama rencana iuran wajib diisi' })
-    .min(3, 'Nama rencana iuran minimal 3 karakter')
-    .max(100, 'Nama rencana iuran maksimal 100 karakter'),
+  organizationId: uuidSchema('Organization ID'),
+  title: safeTextSchema({ min: 3, max: 100, fieldName: 'Nama rencana iuran' }),
   amount: z
     .number({ invalid_type_error: 'Nominal iuran harus berupa angka' })
     .positive('Nominal iuran harus lebih besar dari 0'),
@@ -33,12 +29,8 @@ export type CreateDuePlanInput = z.input<typeof CreateDuePlanSchema>;
 export type CreateDuePlanOutput = z.output<typeof CreateDuePlanSchema>;
 
 export const CreatePaymentSchema = z.object({
-  organizationId: z
-    .string({ required_error: 'Organization ID wajib diisi' })
-    .uuid('Organization ID tidak valid'),
-  dueItemId: z
-    .string({ required_error: 'Due Item ID wajib diisi' })
-    .uuid('Due Item ID tidak valid'),
+  organizationId: uuidSchema('Organization ID'),
+  dueItemId: uuidSchema('Due Item ID'),
   amount: z
     .number({ invalid_type_error: 'Nominal pembayaran harus berupa angka' })
     .positive('Nominal pembayaran harus lebih besar dari 0'),

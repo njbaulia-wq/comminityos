@@ -1,4 +1,10 @@
 import { z } from 'zod';
+import {
+  safeTextSchema,
+  optionalSafeTextSchema,
+  uuidSchema,
+  optionalUuidSchema,
+} from './common.schema';
 
 export const ActivityStatusEnum = z.enum([
   'draft',
@@ -12,18 +18,9 @@ export type ActivityStatus = z.infer<typeof ActivityStatusEnum>;
 
 export const CreateActivitySchema = z
   .object({
-    organizationId: z
-      .string({ required_error: 'Organization ID wajib diisi' })
-      .uuid('Organization ID tidak valid'),
-    title: z
-      .string({ required_error: 'Judul kegiatan wajib diisi' })
-      .min(3, 'Judul kegiatan minimal 3 karakter')
-      .max(150, 'Judul kegiatan maksimal 150 karakter'),
-    description: z
-      .string()
-      .max(1000, 'Deskripsi maksimal 1000 karakter')
-      .optional()
-      .nullable(),
+    organizationId: uuidSchema('Organization ID'),
+    title: safeTextSchema({ min: 3, max: 150, fieldName: 'Judul kegiatan' }),
+    description: optionalSafeTextSchema(1000, 'Deskripsi'),
     startDate: z.string().optional().nullable(),
     endDate: z.string().optional().nullable(),
     status: ActivityStatusEnum.default('draft'),
@@ -31,7 +28,7 @@ export const CreateActivitySchema = z
       .number({ invalid_type_error: 'Estimasi anggaran harus berupa angka' })
       .min(0, 'Estimasi anggaran tidak boleh bernilai negatif')
       .default(0),
-    picMemberId: z.string().uuid('PIC Member ID tidak valid').optional().nullable(),
+    picMemberId: optionalUuidSchema('PIC Member ID'),
   })
   .superRefine((data, ctx) => {
     if (data.startDate && data.endDate && data.endDate < data.startDate) {
@@ -48,14 +45,14 @@ export type CreateActivityOutput = z.output<typeof CreateActivitySchema>;
 
 export const UpdateActivitySchema = z
   .object({
-    organizationId: z.string().uuid('Organization ID tidak valid').optional(),
-    title: z.string().min(3, 'Judul kegiatan minimal 3 karakter').max(150).optional(),
-    description: z.string().max(1000).optional().nullable(),
+    organizationId: optionalUuidSchema('Organization ID'),
+    title: safeTextSchema({ min: 3, max: 150, fieldName: 'Judul kegiatan', required: false }).optional(),
+    description: optionalSafeTextSchema(1000, 'Deskripsi'),
     startDate: z.string().optional().nullable(),
     endDate: z.string().optional().nullable(),
     status: ActivityStatusEnum.optional(),
     budgetEstimate: z.number().min(0, 'Estimasi anggaran tidak boleh bernilai negatif').optional(),
-    picMemberId: z.string().uuid('PIC Member ID tidak valid').optional().nullable(),
+    picMemberId: optionalUuidSchema('PIC Member ID'),
   })
   .superRefine((data, ctx) => {
     if (data.startDate && data.endDate && data.endDate < data.startDate) {

@@ -1,4 +1,10 @@
 import { z } from 'zod';
+import {
+  safeTextSchema,
+  optionalSafeTextSchema,
+  uuidSchema,
+  optionalUuidSchema,
+} from './common.schema';
 
 export const TransactionTypeEnum = z.enum(['income', 'expense', 'transfer']);
 export type TransactionType = z.infer<typeof TransactionTypeEnum>;
@@ -17,23 +23,15 @@ export type AccountType = z.infer<typeof AccountTypeEnum>;
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 export const CreateTransactionSchema = z.object({
-  organizationId: z
-    .string({ required_error: 'Organization ID wajib diisi' })
-    .uuid('Organization ID tidak valid'),
-  accountId: z
-    .string({ required_error: 'Akun kas/bank wajib dipilih' })
-    .uuid('Account ID tidak valid'),
-  categoryId: z.string().uuid('Category ID tidak valid').optional().nullable(),
+  organizationId: uuidSchema('Organization ID'),
+  accountId: uuidSchema('Akun kas/bank'),
+  categoryId: optionalUuidSchema('Category ID'),
   amount: z
     .number({ invalid_type_error: 'Nominal transaksi harus berupa angka' })
     .positive('Nominal transaksi harus lebih besar dari 0'),
   type: TransactionTypeEnum,
   status: TransactionStatusEnum.default('draft'),
-  description: z
-    .string()
-    .max(500, 'Deskripsi transaksi maksimal 500 karakter')
-    .optional()
-    .nullable(),
+  description: optionalSafeTextSchema(500, 'Deskripsi transaksi'),
   transactionDate: z
     .string({ required_error: 'Tanggal transaksi wajib diisi' })
     .regex(DATE_REGEX, 'Format tanggal transaksi harus YYYY-MM-DD'),
@@ -47,19 +45,14 @@ export type UpdateTransactionInput = z.input<typeof UpdateTransactionSchema>;
 export type UpdateTransactionOutput = z.output<typeof UpdateTransactionSchema>;
 
 export const CreateAccountSchema = z.object({
-  organizationId: z
-    .string({ required_error: 'Organization ID wajib diisi' })
-    .uuid('Organization ID tidak valid'),
-  name: z
-    .string({ required_error: 'Nama akun wajib diisi' })
-    .min(2, 'Nama akun minimal 2 karakter')
-    .max(100, 'Nama akun maksimal 100 karakter'),
+  organizationId: uuidSchema('Organization ID'),
+  name: safeTextSchema({ min: 2, max: 100, fieldName: 'Nama akun' }),
   type: AccountTypeEnum,
   balance: z
     .number({ invalid_type_error: 'Saldo harus berupa angka' })
     .min(0, 'Saldo awal tidak boleh bernilai negatif')
     .default(0),
-  accountNumber: z.string().max(50).optional().nullable(),
+  accountNumber: optionalSafeTextSchema(50, 'Nomor rekening/akun'),
 });
 
 export type CreateAccountInput = z.input<typeof CreateAccountSchema>;
