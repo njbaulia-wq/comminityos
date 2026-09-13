@@ -707,11 +707,16 @@ flowchart TD
 
 ---
 
-### [ ] Task 6.3: Document & Storage Service
+### [x] Task 6.3: Document & Storage Service
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Service logika bisnis dokumen dan penyimpanan (`createFolder`, `uploadDocument`, `getSignedDownloadUrl`, `deleteDocument`, `listDocumentsAndFolders`) diimplementasikan di `src/server/services/document.service.ts`.
+  - Siklus TDD berhasil: RED (service belum ada), GREEN (8 integration tests di `tests/integration/document.service.test.ts` lolos memverifikasi otorisasi `documents.manage` dan `documents.read`, pembuatan folder berhierarki, pencatatan metadata berkas, pembuatan signed URL berbatas waktu 15 menit, soft-delete, dan structured audit logging), REFACTOR (resolusi default role permission matrix).
 - **Deskripsi:** Service pengelolaan berkas: membuat folder, mencatat metadata berkas ke database, dan membuat *Signed URL* berbatas waktu untuk pengunduhan dokumen privat.
 - **Layer:** Service / Domain Logic
 - **File yang Disentuh:**
   - `src/server/services/document.service.ts`
+  - `src/server/services/permission.service.ts`
   - `tests/integration/document.service.test.ts`
 - **Behavior yang Mau Dibuktikan Test (RED First):**
   - Pembuatan *Signed URL* kadaluarsa dalam waktu 15 menit dan hanya diberikan kepada user terotentikasi yang memiliki izin baca.

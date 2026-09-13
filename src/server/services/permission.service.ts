@@ -12,6 +12,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'dues.manage',
     'activities.manage',
     'tasks.manage',
+    'documents.read',
     'documents.manage',
     'settings.manage',
   ],
@@ -25,6 +26,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'dues.manage',
     'activities.manage',
     'tasks.manage',
+    'documents.read',
     'documents.manage',
     'settings.manage',
   ],
@@ -34,6 +36,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'finance.approve',
     'activities.manage',
     'tasks.manage',
+    'documents.read',
     'documents.manage',
   ],
   'Vice Chair': [
@@ -42,6 +45,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'finance.approve',
     'activities.manage',
     'tasks.manage',
+    'documents.read',
     'documents.manage',
   ],
   Secretary: [
@@ -49,6 +53,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'members.manage',
     'activities.manage',
     'tasks.manage',
+    'documents.read',
     'documents.manage',
   ],
   Treasurer: [
@@ -57,16 +62,18 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'finance.create',
     'finance.post',
     'dues.manage',
+    'documents.read',
     'documents.manage',
   ],
   Coordinator: [
     'members.read',
     'activities.manage',
     'tasks.manage',
+    'documents.read',
     'documents.manage',
   ],
-  Member: ['members.read', 'finance.read'],
-  Viewer: ['members.read'],
+  Member: ['members.read', 'finance.read', 'documents.read'],
+  Viewer: ['members.read', 'documents.read'],
 };
 
 export interface CheckPermissionParams {
