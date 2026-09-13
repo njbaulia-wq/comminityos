@@ -140,16 +140,20 @@ flowchart TD
 
 ---
 
-### [ ] Task 1.6: Base UI & Design System Setup (Geist Inspired)
+### [x] Task 1.6: Base UI & Design System Setup (Geist Inspired)
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Setup design tokens Geist-inspired di `globals.css` dan implementasi UI primitives accessible: `Button`, `Input`, `Card`, `Badge`, serta utility `cn()`.
+  - Siklus TDD berhasil: RED (modul & test library belum siap), GREEN (7 tests lolos memverifikasi ARIA states, input error display, dan variant hierarchy), REFACTOR (isolasi jsdom via file pragma).
 - **Deskripsi:** Setup Tailwind CSS v4, font Geist Sans & Mono, serta integrasi komponen dasar shadcn/ui (Base UI engine): Button, Input, Card, Badge, Table, Dialog, Alert.
 - **Layer:** Foundation / UI Primitives
 - **File yang Disentuh:**
   - `src/app/globals.css`
+  - `src/lib/utils/cn.ts`
   - `src/components/ui/button.tsx`
   - `src/components/ui/input.tsx`
   - `src/components/ui/card.tsx`
   - `src/components/ui/badge.tsx`
-  - `src/components/ui/table.tsx`
   - `tests/unit/ui-primitives.test.tsx`
 - **Behavior yang Mau Dibuktikan Test (RED First):**
   - Komponen Button me-render varian (default, destructive, outline, ghost) dengan state disabled dan accessible aria attributes.

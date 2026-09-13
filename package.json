@@ -15,15 +15,20 @@
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.116.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.45.0",
     "next": "^16.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.7.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@testing-library/react": "^16.3.3",
     "@types/node": "^22.13.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "jsdom": "^30.0.1",
     "typescript": "^5.7.3",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.0.0"
