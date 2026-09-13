@@ -881,7 +881,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 8.2: Finance Invariant & Anti-Tampering Test Suite
+### [x] Task 8.2: Finance Invariant & Anti-Tampering Test Suite
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Suite pengujian integritas keuangan dan anti-tampering diimplementasikan di `tests/security/finance-invariants.test.ts`.
+  - Siklus pengujian berhasil: 6 test cases lolos memverifikasi penolakan modifikasi/persetujuan/posting transaksi berstatus `posted`, simulasi race condition verifikasi pembayaran iuran ganda ditangani secara atomik (1 berhasil, 1 gagal via `BusinessRuleError`), serta eliminasi floating-point drift pada kalkulator aritmatika buku kas sen integer.
 - **Deskripsi:** Pengujian keamanan tingkat lanjut pada domain keuangan: mencegah mutasi transaksi posted, simulasi race condition pada posting iuran ganda, dan verifikasi saldo kas.
 - **Layer:** Security / Domain Integrity Testing
 - **File yang Disentuh:**
