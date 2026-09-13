@@ -21,6 +21,7 @@ export interface CallerContext {
 
 export interface ActivityRepository {
   findById(organizationId: string, activityId: string): Promise<any | null>;
+  findMember?(organizationId: string, memberId: string): Promise<any | null>;
   list(organizationId: string, filters?: any): Promise<any[]>;
   create(data: any): Promise<any>;
   update(
@@ -79,6 +80,17 @@ export async function createActivity(params: {
   }
 
   const valid = parsed.data;
+
+  // Validate PIC active status if provided
+  if (valid.picMemberId && repo.findMember) {
+    const member = await repo.findMember(valid.organizationId, valid.picMemberId);
+    if (!member) {
+      throw new NotFoundError(`Anggota PIC dengan ID "${valid.picMemberId}" tidak ditemukan`);
+    }
+    if (member.isArchived || member.deletedAt || member.status === 'archived') {
+      throw new BusinessRuleError('Anggota non-aktif tidak dapat ditugaskan sebagai PIC kegiatan');
+    }
+  }
 
   // 3. Create activity
   const activity = await repo.create({
@@ -148,6 +160,17 @@ export async function updateActivity(params: {
     throw new BusinessRuleError(
       'Kegiatan yang telah selesai atau dibatalkan tidak dapat diubah lagi.'
     );
+  }
+
+  // Validate PIC active status if provided
+  if (parsed.data.picMemberId && repo.findMember) {
+    const member = await repo.findMember(organizationId, parsed.data.picMemberId);
+    if (!member) {
+      throw new NotFoundError(`Anggota PIC dengan ID "${parsed.data.picMemberId}" tidak ditemukan`);
+    }
+    if (member.isArchived || member.deletedAt || member.status === 'archived') {
+      throw new BusinessRuleError('Anggota non-aktif tidak dapat ditugaskan sebagai PIC kegiatan');
+    }
   }
 
   // 5. Update

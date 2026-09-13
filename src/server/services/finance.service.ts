@@ -152,6 +152,10 @@ export async function approveTransaction(params: {
     throw new BusinessRuleError('Transaksi yang sudah diposting tidak dapat disetujui ulang');
   }
 
+  if (tx.status === 'void') {
+    throw new BusinessRuleError('Transaksi yang telah dibatalkan (void) tidak dapat disetujui');
+  }
+
   // 3. Update approvedBy
   const updated = await repo.updateTransaction(organizationId, transactionId, {
     approvedBy: caller.userId,
@@ -200,6 +204,10 @@ export async function postTransaction(params: {
 
   if (tx.status === 'posted') {
     throw new BusinessRuleError('Transaksi sudah diposting sebelumnya');
+  }
+
+  if (tx.status === 'void') {
+    throw new BusinessRuleError('Transaksi yang telah dibatalkan (void) tidak dapat dibukukan');
   }
 
   // 3. Check approval requirement

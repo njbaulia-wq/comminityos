@@ -88,6 +88,11 @@ export async function createTask(params: {
         'Penugasan gagal: Anggota yang ditugaskan tidak terdaftar dalam organisasi'
       );
     }
+    if (member.isArchived || member.deletedAt || member.status === 'archived') {
+      throw new BusinessRuleError(
+        'Penugasan gagal: Anggota non-aktif tidak dapat ditugaskan untuk tugas ini'
+      );
+    }
   }
 
   // 4. Create task
@@ -174,6 +179,11 @@ export async function updateTask(params: {
     if (!member) {
       throw new BusinessRuleError(
         'Penugasan gagal: Anggota yang ditugaskan tidak terdaftar dalam organisasi'
+      );
+    }
+    if (member.isArchived || member.deletedAt || member.status === 'archived') {
+      throw new BusinessRuleError(
+        'Penugasan gagal: Anggota non-aktif tidak dapat ditugaskan untuk tugas ini'
       );
     }
   }
