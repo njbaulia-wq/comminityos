@@ -358,7 +358,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 3.4: People Server Actions
+### [x] Task 3.4: People Server Actions
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Endpoint Server Actions untuk modul People (`createMemberAction`, `updateMemberAction`, `archiveMemberAction`, `createTeamAction`, `assignTeamMemberAction`) diimplementasikan di `src/server/actions/people.actions.ts`.
+  - Siklus TDD berhasil: RED (actions belum ada), GREEN (8 integration tests di `tests/integration/people.actions.test.ts` lolos memverifikasi isolasi error envelope `ActionResult<T>`, otorisasi, validasi schema, dan soft delete), REFACTOR (standarisasi requestId dan context fallback).
 - **Deskripsi:** Endpoint Server Actions untuk operasi CRUD data anggota dan tim dari UI.
 - **Layer:** Presentation / Server Actions
 - **File yang Disentuh:**
