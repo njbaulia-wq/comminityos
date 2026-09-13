@@ -397,7 +397,11 @@ flowchart TD
 
 ## Fase 4: Activities & Tasks Module
 
-### [ ] Task 4.1: Database Migration: Activities & Tasks Schema
+### [x] Task 4.1: Database Migration: Activities & Tasks Schema
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Migrasi PostgreSQL modul Activities & Tasks diimplementasikan di `supabase/migrations/20260913000004_activities_tasks.sql` (tabel activities, activity_members, tasks, task_checklists, dan RLS).
+  - Siklus TDD berhasil: RED (file migrasi belum ada), GREEN (7 integration tests di `tests/integration/activities-tasks-schema.test.ts` lolos memverifikasi check constraint status/prioritas/anggaran non-negatif, cascade foreign keys, dan RLS security definer policies), REFACTOR (standarisasi default timestamp & soft-delete fields).
 - **Deskripsi:** Migrasi SQL untuk tabel `activities`, `activity_members`, `tasks`, dan `task_checklists`.
 - **Layer:** Data Access / Database Schema
 - **File yang Disentuh:**
