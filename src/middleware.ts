@@ -51,6 +51,25 @@ export function handleTenantRouting(params: TenantRoutingParams): {
   return { action: 'next' };
 }
 
+export const SECURITY_HEADERS: Record<string, string> = {
+  'X-Frame-Options': 'DENY',
+  'X-Content-Type-Options': 'nosniff',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Content-Security-Policy':
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
+  'Permissions-Policy':
+    'camera=(), microphone=(), geolocation=(), browsing-topics=()',
+  'X-DNS-Prefetch-Control': 'on',
+};
+
+export function applySecurityHeaders(response: NextResponse): NextResponse {
+  for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
+    response.headers.set(key, value);
+  }
+  return response;
+}
+
 export async function middleware(request: NextRequest) {
   const { response, user } = await updateSession(request);
   const routing = handleTenantRouting({
@@ -59,10 +78,11 @@ export async function middleware(request: NextRequest) {
   });
 
   if (routing.action === 'redirect' && routing.destination) {
-    return NextResponse.redirect(new URL(routing.destination, request.url));
+    const redirectResponse = NextResponse.redirect(new URL(routing.destination, request.url));
+    return applySecurityHeaders(redirectResponse);
   }
 
-  return response;
+  return applySecurityHeaders(response);
 }
 
 export const config = {
