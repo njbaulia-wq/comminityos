@@ -821,7 +821,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 7.4: Notification Server Actions
+### [x] Task 7.4: Notification Server Actions
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Endpoint Server Actions untuk notifikasi (`markNotificationAsReadAction`, `markAllNotificationsAsReadAction`, `listUserNotificationsAction`) diimplementasikan di `src/server/actions/notification.actions.ts`.
+  - Siklus TDD berhasil: RED (actions belum ada), GREEN (5 integration tests di `tests/integration/notification.actions.test.ts` lolos memverifikasi isolasi error envelope `ActionResult<T>`, otorisasi pemilik notifikasi vs penyerang via `FORBIDDEN`, status `NOT_FOUND`, dan penandaan massal), REFACTOR (tata rapi fallback repositories).
 - **Deskripsi:** Server Actions untuk menandai notifikasi telah dibaca.
 - **Layer:** Presentation / Server Actions
 - **File yang Disentuh:**
