@@ -203,7 +203,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 2.3: Zod Schemas for Auth & Onboarding
+### [x] Task 2.3: Zod Schemas for Auth & Onboarding
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Skema validasi Zod untuk `Login`, `Signup`, `CreateOrganization`, dan `InviteMember` diimplementasikan di `src/lib/validation/auth.schema.ts` dan `src/lib/validation/organization.schema.ts`.
+  - Siklus TDD berhasil: RED (skema belum ada), GREEN (9 unit tests lolos memverifikasi pencegahan password mismatch, validasi slug regex, enum template organisasi, dan validasi UUID role), REFACTOR (tipe TypeScript di-infer langsung).
 - **Deskripsi:** Skema validasi untuk Login, Registrasi, Buat Organisasi, dan Undangan Anggota.
 - **Layer:** Service / Validation Boundary
 - **File yang Disentuh:**
