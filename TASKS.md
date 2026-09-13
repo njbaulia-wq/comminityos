@@ -100,7 +100,11 @@ flowchart TD
 
 ---
 
-### [ ] Task 1.4: Environment Configuration Schema
+### [x] Task 1.4: Environment Configuration Schema
+- **Status:** SELESAI (2026-09-13)
+- **Catatan Progres:**
+  - Validasi skema Zod untuk environment variables diimplementasikan di `src/lib/env.ts` beserta file contoh `.env.example`.
+  - Siklus TDD berhasil: RED (modul belum ada), GREEN (4 unit test lolos memverifikasi kegagalan parsing URL, deteksi variabel hilang, default NODE_ENV, dan parsing sukses), REFACTOR (lazy caching dan penanganan fieldErrors terstruktur).
 - **Deskripsi:** Validasi variabel lingkungan (*runtime & build time environment variables*) menggunakan Zod skema untuk Supabase URL, Anon Key, Service Role Key, App URL, dan Node Env.
 - **Layer:** Foundation / Configuration
 - **File yang Disentuh:**
