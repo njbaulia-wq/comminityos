@@ -1,10 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { ActivityFormDialog, ActivityFormData } from '@/components/modules/activities/activity-form-dialog';
+import { getActivitiesData } from '@/server/actions/data-fetchers.actions';
+import { createActivityAction } from '@/server/actions/activity.actions';
 
 interface ActivitiesPageProps {
   params: Promise<{
@@ -23,12 +26,11 @@ export interface ActivityListItem {
 
 export default function ActivitiesPage({ params }: ActivitiesPageProps) {
   const [resolvedParams, setResolvedParams] = useState<{ orgSlug: string } | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [organizationId, setOrganizationId] = useState('11111111-1111-4111-8111-111111111111');
 
-  React.useEffect(() => {
-    params.then(setResolvedParams);
-  }, [params]);
-
-  const [activities] = useState<ActivityListItem[]>([
+  const [activities, setActivities] = useState<ActivityListItem[]>([
     {
       id: 'act-1',
       title: 'Peringatan Hari Kemerdekaan RI Ke-81',
@@ -38,6 +40,66 @@ export default function ActivitiesPage({ params }: ActivitiesPageProps) {
       budgetEstimate: 4500000,
     },
   ]);
+
+  const loadActivities = useCallback(async (slug: string) => {
+    try {
+      const res = await getActivitiesData(slug);
+      if (res) {
+        setOrganizationId(res.organizationId);
+        if (res.activities.length > 0) {
+          setActivities(res.activities);
+        }
+      }
+    } catch {
+      // Offline test environment fallback
+    }
+  }, []);
+
+  useEffect(() => {
+    params.then((p) => {
+      setResolvedParams(p);
+      loadActivities(p.orgSlug);
+    });
+  }, [params, loadActivities]);
+
+  const handleCreateActivity = async (formData: ActivityFormData) => {
+    setErrorMessage(null);
+    try {
+      const result = await createActivityAction({
+        organizationId,
+        title: formData.title,
+        description: formData.description,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        status: 'planned',
+        budgetEstimate: formData.budgetEstimate,
+      });
+
+      if (!result.success) {
+        setErrorMessage(result.error?.message || 'Gagal membuat kegiatan');
+        return;
+      }
+
+      if (resolvedParams) {
+        await loadActivities(resolvedParams.orgSlug);
+      } else {
+        setActivities((prev) => [
+          {
+            id: result.data.id,
+            title: formData.title,
+            description: formData.description,
+            status: 'planned',
+            startDate: formData.startDate,
+            budgetEstimate: formData.budgetEstimate,
+          },
+          ...prev,
+        ]);
+      }
+      setIsDialogOpen(false);
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'Gagal membuat kegiatan');
+    }
+  };
 
   const getStatusVariant = (status: ActivityListItem['status']) => {
     switch (status) {
@@ -65,7 +127,7 @@ export default function ActivitiesPage({ params }: ActivitiesPageProps) {
             Rencanakan kepanitiaan, alokasi anggaran, dan jadwal program
           </p>
         </div>
-        <Button>+ Buat Kegiatan</Button>
+        <Button onClick={() => setIsDialogOpen(true)}>+ Buat Kegiatan</Button>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -106,6 +168,13 @@ export default function ActivitiesPage({ params }: ActivitiesPageProps) {
           </Card>
         ))}
       </div>
+
+      <ActivityFormDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onSubmit={handleCreateActivity}
+        errorMessage={errorMessage}
+      />
     </div>
   );
 }

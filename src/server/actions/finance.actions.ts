@@ -1,3 +1,5 @@
+'use server';
+
 import {
   CreateTransactionInput,
   UpdateTransactionInput,
@@ -14,10 +16,11 @@ import {
   FinanceRepository,
   CallerContext,
 } from '@/server/services/finance.service';
-
+import { createSupabaseFinanceRepo } from '@/server/repositories/supabase-finance.repo';
+import { resolveCallerContext } from './context-helper';
 import { validateUuidParams } from '@/lib/validation/common.schema';
 
-export interface FinanceActionContext extends CallerContext {
+export interface FinanceActionContext extends Partial<CallerContext> {
   requestId?: string;
   repo?: FinanceRepository;
 }
@@ -31,21 +34,33 @@ const fallbackRepo: FinanceRepository = {
   listTransactions: async () => [],
 };
 
+function getRepo(explicit?: FinanceRepository): FinanceRepository {
+  if (explicit) return explicit;
+  try {
+    return createSupabaseFinanceRepo();
+  } catch {
+    return fallbackRepo;
+  }
+}
+
 export async function createTransactionAction(
   rawInput: CreateTransactionInput,
-  context: FinanceActionContext
+  context?: FinanceActionContext
 ): Promise<ActionResult<any>> {
-  const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
+  const requestId = context?.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    const caller = await resolveCallerContext(rawInput.organizationId, context);
+    const repo = getRepo(context?.repo);
+
     const tx = await createTransaction({
       input: rawInput,
       caller: {
-        userId: context.userId,
-        roleName: context.roleName,
+        userId: caller.userId,
+        roleName: caller.roleName,
       },
-      repo: context.repo || fallbackRepo,
-      requestId,
+      repo,
+      requestId: caller.requestId,
     });
 
     return successResult(tx);
@@ -56,7 +71,7 @@ export async function createTransactionAction(
       action: 'action.create_transaction',
       requestId,
       organizationId: rawInput.organizationId,
-      userId: context.userId,
+      userId: context?.userId,
     });
   }
 }
@@ -66,9 +81,9 @@ export async function approveTransactionAction(
     organizationId: string;
     transactionId: string;
   },
-  context: FinanceActionContext
+  context?: FinanceActionContext
 ): Promise<ActionResult<any>> {
-  const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
+  const requestId = context?.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
     validateUuidParams({
@@ -76,15 +91,18 @@ export async function approveTransactionAction(
       transactionId: params.transactionId,
     });
 
+    const caller = await resolveCallerContext(params.organizationId, context);
+    const repo = getRepo(context?.repo);
+
     const approved = await approveTransaction({
       organizationId: params.organizationId,
       transactionId: params.transactionId,
       caller: {
-        userId: context.userId,
-        roleName: context.roleName,
+        userId: caller.userId,
+        roleName: caller.roleName,
       },
-      repo: context.repo || fallbackRepo,
-      requestId,
+      repo,
+      requestId: caller.requestId,
     });
 
     return successResult(approved);
@@ -95,7 +113,7 @@ export async function approveTransactionAction(
       action: 'action.approve_transaction',
       requestId,
       organizationId: params.organizationId,
-      userId: context.userId,
+      userId: context?.userId,
     });
   }
 }
@@ -105,9 +123,9 @@ export async function postTransactionAction(
     organizationId: string;
     transactionId: string;
   },
-  context: FinanceActionContext
+  context?: FinanceActionContext
 ): Promise<ActionResult<any>> {
-  const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
+  const requestId = context?.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
     validateUuidParams({
@@ -115,15 +133,18 @@ export async function postTransactionAction(
       transactionId: params.transactionId,
     });
 
+    const caller = await resolveCallerContext(params.organizationId, context);
+    const repo = getRepo(context?.repo);
+
     const posted = await postTransaction({
       organizationId: params.organizationId,
       transactionId: params.transactionId,
       caller: {
-        userId: context.userId,
-        roleName: context.roleName,
+        userId: caller.userId,
+        roleName: caller.roleName,
       },
-      repo: context.repo || fallbackRepo,
-      requestId,
+      repo,
+      requestId: caller.requestId,
     });
 
     return successResult(posted);
@@ -134,7 +155,7 @@ export async function postTransactionAction(
       action: 'action.post_transaction',
       requestId,
       organizationId: params.organizationId,
-      userId: context.userId,
+      userId: context?.userId,
     });
   }
 }

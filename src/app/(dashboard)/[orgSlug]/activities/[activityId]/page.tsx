@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { getActivityDetailData } from '@/server/actions/data-fetchers.actions';
+import { changeActivityStatusAction } from '@/server/actions/activity.actions';
 
 interface ActivityDetailPageProps {
   params: Promise<{
@@ -19,9 +21,69 @@ export default function ActivityDetailPage({ params }: ActivityDetailPageProps) 
     activityId: string;
   } | null>(null);
 
-  React.useEffect(() => {
-    params.then(setResolvedParams);
-  }, [params]);
+  const [activity, setActivity] = useState<{
+    id: string;
+    title: string;
+    description?: string;
+    status: string;
+    budgetEstimate: number;
+    startDate?: string;
+    endDate?: string;
+    picName: string;
+    picRole: string;
+  }>({
+    id: 'act-123',
+    title: 'Kerja Bakti Akbar',
+    description: 'Pembersihan saluran air dan fasilitas umum warga',
+    status: 'active',
+    budgetEstimate: 1500000,
+    startDate: '2026-10-01',
+    endDate: '2026-10-02',
+    picName: 'Budi Santoso',
+    picRole: 'Ketua Seksi Kebersihan',
+  });
+
+  const loadDetail = useCallback(async (slug: string, id: string) => {
+    try {
+      const data = await getActivityDetailData(slug, id);
+      if (data) {
+        setActivity({
+          id: data.id,
+          title: data.title,
+          description: data.description || '',
+          status: data.status,
+          budgetEstimate: data.budgetEstimate,
+          startDate: data.startDate || '2026-10-01',
+          endDate: data.endDate || '2026-10-02',
+          picName: data.picName,
+          picRole: data.picRole,
+        });
+      }
+    } catch {
+      // Offline fallback
+    }
+  }, []);
+
+  useEffect(() => {
+    params.then((p) => {
+      setResolvedParams(p);
+      loadDetail(p.orgSlug, p.activityId);
+    });
+  }, [params, loadDetail]);
+
+  const handleComplete = async () => {
+    if (!resolvedParams) return;
+    try {
+      await changeActivityStatusAction({
+        organizationId: '11111111-1111-4111-8111-111111111111',
+        activityId: resolvedParams.activityId,
+        newStatus: 'completed',
+      });
+      setActivity((prev) => ({ ...prev, status: 'completed' }));
+    } catch (err: any) {
+      alert(err?.message || 'Gagal menyelesaikan kegiatan');
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -40,9 +102,11 @@ export default function ActivityDetailPage({ params }: ActivityDetailPageProps) 
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
-              Detail Kegiatan: Kerja Bakti Akbar
+              Detail Kegiatan: {activity.title}
             </h1>
-            <Badge variant="success">Active</Badge>
+            <Badge variant={activity.status === 'completed' ? 'secondary' : 'success'}>
+              {activity.status}
+            </Badge>
           </div>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
             ID: {resolvedParams?.activityId || 'loading...'}
@@ -50,8 +114,9 @@ export default function ActivityDetailPage({ params }: ActivityDetailPageProps) 
         </div>
 
         <div className="flex gap-2">
-          <Button variant="outline">Ubah Data</Button>
-          <Button>Selesaikan Kegiatan</Button>
+          {activity.status !== 'completed' && (
+            <Button onClick={handleComplete}>Selesaikan Kegiatan</Button>
+          )}
         </div>
       </div>
 
@@ -62,7 +127,7 @@ export default function ActivityDetailPage({ params }: ActivityDetailPageProps) 
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-              Rp 1.500.000
+              Rp {activity.budgetEstimate.toLocaleString('id-ID')}
             </div>
             <p className="text-xs text-neutral-400 mt-1">Estimasi awal perencanaan</p>
           </CardContent>
@@ -74,9 +139,9 @@ export default function ActivityDetailPage({ params }: ActivityDetailPageProps) 
           </CardHeader>
           <CardContent>
             <div className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
-              01 Okt 2026 - 02 Okt 2026
+              {activity.startDate} {activity.endDate ? `- ${activity.endDate}` : ''}
             </div>
-            <p className="text-xs text-neutral-400 mt-1">Durasi 2 hari</p>
+            <p className="text-xs text-neutral-400 mt-1">Agenda resmi organisasi</p>
           </CardContent>
         </Card>
 
@@ -86,9 +151,9 @@ export default function ActivityDetailPage({ params }: ActivityDetailPageProps) 
           </CardHeader>
           <CardContent>
             <div className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
-              Budi Santoso
+              {activity.picName}
             </div>
-            <p className="text-xs text-neutral-400 mt-1">Ketua Seksi Kebersihan</p>
+            <p className="text-xs text-neutral-400 mt-1">{activity.picRole}</p>
           </CardContent>
         </Card>
       </div>

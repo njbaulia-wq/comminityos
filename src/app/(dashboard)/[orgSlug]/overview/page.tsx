@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ActionQueue, ActionQueueItem } from '@/components/modules/dashboard/action-queue';
 import { FinanceSnapshot } from '@/components/modules/dashboard/finance-snapshot';
 import { UpcomingAgenda, AgendaActivity, UrgentTask } from '@/components/modules/dashboard/upcoming-agenda';
+import { getOverviewData } from '@/server/actions/data-fetchers.actions';
+import { approveTransactionAction } from '@/server/actions/finance.actions';
 
 interface OverviewPageProps {
   params: Promise<{
@@ -12,11 +14,12 @@ interface OverviewPageProps {
 }
 
 export default function OverviewPage({ params }: OverviewPageProps) {
-  const [, setResolvedParams] = useState<{ orgSlug: string } | null>(null);
-
-  React.useEffect(() => {
-    params.then(setResolvedParams);
-  }, [params]);
+  const [resolvedParams, setResolvedParams] = useState<{ orgSlug: string } | null>(null);
+  const [organizationId, setOrganizationId] = useState('11111111-1111-4111-8111-111111111111');
+  const [balance, setBalance] = useState(12500000);
+  const [monthlyIncome, setMonthlyIncome] = useState(4500000);
+  const [monthlyExpense, setMonthlyExpense] = useState(1200000);
+  const [duesComplianceRate, setDuesComplianceRate] = useState(85);
 
   const [queue, setQueue] = useState<ActionQueueItem[]>([
     {
@@ -37,7 +40,7 @@ export default function OverviewPage({ params }: OverviewPageProps) {
     },
   ]);
 
-  const [activities] = useState<AgendaActivity[]>([
+  const [activities, setActivities] = useState<AgendaActivity[]>([
     {
       id: 'act-1',
       title: 'Kerja Bakti Lingkungan RT 05',
@@ -46,7 +49,7 @@ export default function OverviewPage({ params }: OverviewPageProps) {
     },
   ]);
 
-  const [tasks] = useState<UrgentTask[]>([
+  const [tasks, setTasks] = useState<UrgentTask[]>([
     {
       id: 't-1',
       title: 'Beli Cat Pos Ronda',
@@ -55,9 +58,58 @@ export default function OverviewPage({ params }: OverviewPageProps) {
     },
   ]);
 
-  const handleAction = (item: ActionQueueItem) => {
-    alert(`Memproses tindakan: ${item.title}`);
-    setQueue((prev) => prev.filter((q) => q.id !== item.id));
+  const loadOverview = useCallback(async (slug: string) => {
+    try {
+      const data = await getOverviewData(slug);
+      if (data) {
+        setOrganizationId(data.organizationId);
+        setBalance(data.financeSnapshot.balance);
+        setMonthlyIncome(data.financeSnapshot.monthlyIncome);
+        setMonthlyExpense(data.financeSnapshot.monthlyExpense);
+        setDuesComplianceRate(data.financeSnapshot.duesComplianceRate);
+        if (data.actionQueue.length > 0) {
+          setQueue(data.actionQueue);
+        }
+        if (data.activities.length > 0) {
+          setActivities(data.activities);
+        }
+        if (data.tasks.length > 0) {
+          setTasks(data.tasks);
+        }
+      }
+    } catch {
+      // Fallback
+    }
+  }, []);
+
+  useEffect(() => {
+    params.then((p) => {
+      setResolvedParams(p);
+      loadOverview(p.orgSlug);
+    });
+  }, [params, loadOverview]);
+
+  const handleAction = async (item: ActionQueueItem) => {
+    if (item.type === 'expense_approval') {
+      try {
+        await approveTransactionAction({
+          organizationId,
+          transactionId: item.id,
+        });
+        setQueue((prev) => prev.filter((q) => q.id !== item.id));
+        if (resolvedParams) {
+          await loadOverview(resolvedParams.orgSlug);
+        }
+      } catch (err: any) {
+        alert(err?.message || 'Gagal memproses persetujuan');
+      }
+    } else if (item.type === 'dues_verification') {
+      if (resolvedParams && typeof window !== 'undefined') {
+        window.location.href = `/${resolvedParams.orgSlug}/finance`;
+      }
+    } else {
+      setQueue((prev) => prev.filter((q) => q.id !== item.id));
+    }
   };
 
   return (
@@ -83,10 +135,10 @@ export default function OverviewPage({ params }: OverviewPageProps) {
         {/* Right 1 Col: Financial Health Snapshot */}
         <div className="space-y-6 lg:col-span-1">
           <FinanceSnapshot
-            balance={12500000}
-            monthlyIncome={4500000}
-            monthlyExpense={1200000}
-            duesComplianceRate={85}
+            balance={balance}
+            monthlyIncome={monthlyIncome}
+            monthlyExpense={monthlyExpense}
+            duesComplianceRate={duesComplianceRate}
           />
         </div>
       </div>

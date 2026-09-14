@@ -1,3 +1,5 @@
+'use server';
+
 import {
   CreateMemberInput,
   UpdateMemberInput,
@@ -17,10 +19,11 @@ import {
   PeopleRepository,
   CallerContext,
 } from '@/server/services/people.service';
-
+import { createSupabasePeopleRepo } from '@/server/repositories/supabase-people.repo';
+import { resolveCallerContext } from './context-helper';
 import { validateUuidParams } from '@/lib/validation/common.schema';
 
-export interface PeopleActionContext extends CallerContext {
+export interface PeopleActionContext extends Partial<CallerContext> {
   requestId?: string;
   repo?: PeopleRepository;
 }
@@ -40,21 +43,33 @@ const fallbackRepo: PeopleRepository = {
   removeMemberFromTeam: async () => {},
 };
 
+function getRepo(explicit?: PeopleRepository): PeopleRepository {
+  if (explicit) return explicit;
+  try {
+    return createSupabasePeopleRepo();
+  } catch {
+    return fallbackRepo;
+  }
+}
+
 export async function createMemberAction(
   rawInput: CreateMemberInput,
-  context: PeopleActionContext
+  context?: PeopleActionContext
 ): Promise<ActionResult<any>> {
-  const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
+  const requestId = context?.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    const caller = await resolveCallerContext(rawInput.organizationId, context);
+    const repo = getRepo(context?.repo);
+
     const member = await createMember({
       input: rawInput,
       caller: {
-        userId: context.userId,
-        roleName: context.roleName,
+        userId: caller.userId,
+        roleName: caller.roleName,
       },
-      repo: context.repo || fallbackRepo,
-      requestId,
+      repo,
+      requestId: caller.requestId,
     });
 
     return successResult(member);
@@ -65,7 +80,7 @@ export async function createMemberAction(
       action: 'action.create_member',
       requestId,
       organizationId: rawInput.organizationId,
-      userId: context.userId,
+      userId: context?.userId,
     });
   }
 }
@@ -76,9 +91,9 @@ export async function updateMemberAction(
     memberId: string;
     input: UpdateMemberInput;
   },
-  context: PeopleActionContext
+  context?: PeopleActionContext
 ): Promise<ActionResult<any>> {
-  const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
+  const requestId = context?.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
     validateUuidParams({
@@ -86,16 +101,19 @@ export async function updateMemberAction(
       memberId: params.memberId,
     });
 
+    const caller = await resolveCallerContext(params.organizationId, context);
+    const repo = getRepo(context?.repo);
+
     const updated = await updateMember({
       organizationId: params.organizationId,
       memberId: params.memberId,
       input: params.input,
       caller: {
-        userId: context.userId,
-        roleName: context.roleName,
+        userId: caller.userId,
+        roleName: caller.roleName,
       },
-      repo: context.repo || fallbackRepo,
-      requestId,
+      repo,
+      requestId: caller.requestId,
     });
 
     return successResult(updated);
@@ -106,7 +124,7 @@ export async function updateMemberAction(
       action: 'action.update_member',
       requestId,
       organizationId: params.organizationId,
-      userId: context.userId,
+      userId: context?.userId,
     });
   }
 }
@@ -116,9 +134,9 @@ export async function archiveMemberAction(
     organizationId: string;
     memberId: string;
   },
-  context: PeopleActionContext
+  context?: PeopleActionContext
 ): Promise<ActionResult<{ success: boolean }>> {
-  const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
+  const requestId = context?.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
     validateUuidParams({
@@ -126,15 +144,18 @@ export async function archiveMemberAction(
       memberId: params.memberId,
     });
 
+    const caller = await resolveCallerContext(params.organizationId, context);
+    const repo = getRepo(context?.repo);
+
     const result = await archiveMember({
       organizationId: params.organizationId,
       memberId: params.memberId,
       caller: {
-        userId: context.userId,
-        roleName: context.roleName,
+        userId: caller.userId,
+        roleName: caller.roleName,
       },
-      repo: context.repo || fallbackRepo,
-      requestId,
+      repo,
+      requestId: caller.requestId,
     });
 
     return successResult(result);
@@ -145,26 +166,29 @@ export async function archiveMemberAction(
       action: 'action.archive_member',
       requestId,
       organizationId: params.organizationId,
-      userId: context.userId,
+      userId: context?.userId,
     });
   }
 }
 
 export async function createTeamAction(
   rawInput: CreateTeamInput,
-  context: PeopleActionContext
+  context?: PeopleActionContext
 ): Promise<ActionResult<any>> {
-  const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
+  const requestId = context?.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    const caller = await resolveCallerContext(rawInput.organizationId, context);
+    const repo = getRepo(context?.repo);
+
     const team = await createTeam({
       input: rawInput,
       caller: {
-        userId: context.userId,
-        roleName: context.roleName,
+        userId: caller.userId,
+        roleName: caller.roleName,
       },
-      repo: context.repo || fallbackRepo,
-      requestId,
+      repo,
+      requestId: caller.requestId,
     });
 
     return successResult(team);
@@ -175,7 +199,7 @@ export async function createTeamAction(
       action: 'action.create_team',
       requestId,
       organizationId: rawInput.organizationId,
-      userId: context.userId,
+      userId: context?.userId,
     });
   }
 }
@@ -186,9 +210,9 @@ export async function assignTeamMemberAction(
     teamId: string;
     memberId: string;
   },
-  context: PeopleActionContext
+  context?: PeopleActionContext
 ): Promise<ActionResult<any>> {
-  const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
+  const requestId = context?.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
     validateUuidParams({
@@ -197,16 +221,19 @@ export async function assignTeamMemberAction(
       memberId: params.memberId,
     });
 
+    const caller = await resolveCallerContext(params.organizationId, context);
+    const repo = getRepo(context?.repo);
+
     const assignment = await assignTeamMember({
       organizationId: params.organizationId,
       teamId: params.teamId,
       memberId: params.memberId,
       caller: {
-        userId: context.userId,
-        roleName: context.roleName,
+        userId: caller.userId,
+        roleName: caller.roleName,
       },
-      repo: context.repo || fallbackRepo,
-      requestId,
+      repo,
+      requestId: caller.requestId,
     });
 
     return successResult(assignment);
@@ -217,7 +244,7 @@ export async function assignTeamMemberAction(
       action: 'action.assign_team_member',
       requestId,
       organizationId: params.organizationId,
-      userId: context.userId,
+      userId: context?.userId,
     });
   }
 }

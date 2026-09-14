@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   FolderTree,
@@ -11,6 +11,12 @@ import {
   DocumentViewItem,
 } from '@/components/modules/documents/document-list';
 import { FileUploader } from '@/components/modules/documents/file-uploader';
+import { getDocumentsData } from '@/server/actions/data-fetchers.actions';
+import {
+  uploadDocumentAction,
+  deleteDocumentAction,
+  getSignedDownloadUrlAction,
+} from '@/server/actions/document.actions';
 
 interface DocumentsPageProps {
   params: Promise<{
@@ -19,15 +25,12 @@ interface DocumentsPageProps {
 }
 
 export default function DocumentsPage({ params }: DocumentsPageProps) {
-  const [, setResolvedParams] = useState<{ orgSlug: string } | null>(null);
+  const [resolvedParams, setResolvedParams] = useState<{ orgSlug: string } | null>(null);
+  const [organizationId, setOrganizationId] = useState('11111111-1111-4111-8111-111111111111');
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [isUploaderOpen, setIsUploaderOpen] = useState(false);
 
-  React.useEffect(() => {
-    params.then(setResolvedParams);
-  }, [params]);
-
-  const [folders] = useState<FolderItem[]>([
+  const [folders, setFolders] = useState<FolderItem[]>([
     { id: 'f-1', name: 'Surat Keputusan RT' },
     { id: 'f-2', name: 'Laporan Pertanggungjawaban' },
   ]);
@@ -51,11 +54,36 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
     },
   ]);
 
+  const loadDocuments = useCallback(async (slug: string) => {
+    try {
+      const res = await getDocumentsData(slug);
+      if (res) {
+        setOrganizationId(res.organizationId);
+        if (res.folders.length > 0) {
+          setFolders(res.folders);
+        }
+        if (res.documents.length > 0) {
+          setDocuments(res.documents);
+        }
+      }
+    } catch {
+      // Fallback
+    }
+  }, []);
+
+  useEffect(() => {
+    params.then((p) => {
+      setResolvedParams(p);
+      loadDocuments(p.orgSlug);
+    });
+  }, [params, loadDocuments]);
+
   const filteredDocuments = selectedFolderId
     ? documents.filter((doc) => doc.folderId === selectedFolderId)
     : documents;
 
   const handleUpload = async (file: File, folderId?: string | null) => {
+    const filePath = `${organizationId}/${Date.now()}_${file.name}`;
     const newDoc: DocumentViewItem = {
       id: 'd-' + Date.now(),
       name: file.name,
@@ -65,14 +93,55 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
       folderId: folderId || null,
     };
     setDocuments((prev) => [newDoc, ...prev]);
+
+    try {
+      await uploadDocumentAction({
+        organizationId,
+        folderId: folderId || undefined,
+        name: file.name,
+        filePath,
+        fileSize: file.size,
+        mimeType: file.type || 'application/octet-stream',
+        storageBucket: 'org-documents',
+      });
+      if (resolvedParams) {
+        await loadDocuments(resolvedParams.orgSlug);
+      }
+    } catch (err: any) {
+      console.error('Gagal mengunggah dokumen:', err);
+    }
   };
 
-  const handleDownload = (doc: DocumentViewItem) => {
-    alert(`Mengunduh dokumen: ${doc.name}`);
+  const handleDownload = async (doc: DocumentViewItem) => {
+    try {
+      const res = await getSignedDownloadUrlAction({
+        organizationId,
+        documentId: doc.id,
+      });
+      if (res.success && res.data.signedUrl) {
+        window.open(res.data.signedUrl, '_blank');
+      } else {
+        alert(`Mengunduh dokumen: ${doc.name}`);
+      }
+    } catch {
+      alert(`Mengunduh dokumen: ${doc.name}`);
+    }
   };
 
-  const handleDelete = (doc: DocumentViewItem) => {
+  const handleDelete = async (doc: DocumentViewItem) => {
     setDocuments((prev) => prev.filter((d) => d.id !== doc.id));
+
+    try {
+      await deleteDocumentAction({
+        organizationId,
+        documentId: doc.id,
+      });
+      if (resolvedParams) {
+        await loadDocuments(resolvedParams.orgSlug);
+      }
+    } catch (err: any) {
+      console.error('Gagal menghapus dokumen:', err);
+    }
   };
 
   return (

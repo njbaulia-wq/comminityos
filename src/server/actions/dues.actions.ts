@@ -1,3 +1,5 @@
+'use server';
+
 import {
   CreateDuePlanInput,
   CreatePaymentInput,
@@ -14,10 +16,11 @@ import {
   DuesRepository,
   CallerContext,
 } from '@/server/services/dues.service';
-
+import { createSupabaseDuesRepo } from '@/server/repositories/supabase-dues.repo';
+import { resolveCallerContext } from './context-helper';
 import { validateUuidParams } from '@/lib/validation/common.schema';
 
-export interface DuesActionContext extends CallerContext {
+export interface DuesActionContext extends Partial<CallerContext> {
   requestId?: string;
   repo?: DuesRepository;
 }
@@ -36,21 +39,33 @@ const fallbackRepo: DuesRepository = {
   }),
 };
 
+function getRepo(explicit?: DuesRepository): DuesRepository {
+  if (explicit) return explicit;
+  try {
+    return createSupabaseDuesRepo();
+  } catch {
+    return fallbackRepo;
+  }
+}
+
 export async function createDuePlanAction(
   rawInput: CreateDuePlanInput,
-  context: DuesActionContext
+  context?: DuesActionContext
 ): Promise<ActionResult<any>> {
-  const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
+  const requestId = context?.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    const caller = await resolveCallerContext(rawInput.organizationId, context);
+    const repo = getRepo(context?.repo);
+
     const plan = await createDuePlan({
       input: rawInput,
       caller: {
-        userId: context.userId,
-        roleName: context.roleName,
+        userId: caller.userId,
+        roleName: caller.roleName,
       },
-      repo: context.repo || fallbackRepo,
-      requestId,
+      repo,
+      requestId: caller.requestId,
     });
 
     return successResult(plan);
@@ -61,26 +76,29 @@ export async function createDuePlanAction(
       action: 'action.create_due_plan',
       requestId,
       organizationId: rawInput.organizationId,
-      userId: context.userId,
+      userId: context?.userId,
     });
   }
 }
 
 export async function submitPaymentAction(
   rawInput: CreatePaymentInput,
-  context: DuesActionContext
+  context?: DuesActionContext
 ): Promise<ActionResult<any>> {
-  const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
+  const requestId = context?.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    const caller = await resolveCallerContext(rawInput.organizationId, context);
+    const repo = getRepo(context?.repo);
+
     const payment = await submitPayment({
       input: rawInput,
       caller: {
-        userId: context.userId,
-        roleName: context.roleName,
+        userId: caller.userId,
+        roleName: caller.roleName,
       },
-      repo: context.repo || fallbackRepo,
-      requestId,
+      repo,
+      requestId: caller.requestId,
     });
 
     return successResult(payment);
@@ -91,7 +109,7 @@ export async function submitPaymentAction(
       action: 'action.submit_payment',
       requestId,
       organizationId: rawInput.organizationId,
-      userId: context.userId,
+      userId: context?.userId,
     });
   }
 }
@@ -103,9 +121,9 @@ export async function verifyPaymentAction(
     accountId: string;
     categoryId?: string;
   },
-  context: DuesActionContext
+  context?: DuesActionContext
 ): Promise<ActionResult<any>> {
-  const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
+  const requestId = context?.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
     validateUuidParams({
@@ -115,17 +133,20 @@ export async function verifyPaymentAction(
       ...(params.categoryId ? { categoryId: params.categoryId } : {}),
     });
 
+    const caller = await resolveCallerContext(params.organizationId, context);
+    const repo = getRepo(context?.repo);
+
     const result = await verifyPayment({
       organizationId: params.organizationId,
       paymentId: params.paymentId,
       accountId: params.accountId,
       categoryId: params.categoryId,
       caller: {
-        userId: context.userId,
-        roleName: context.roleName,
+        userId: caller.userId,
+        roleName: caller.roleName,
       },
-      repo: context.repo || fallbackRepo,
-      requestId,
+      repo,
+      requestId: caller.requestId,
     });
 
     return successResult(result);
@@ -136,7 +157,7 @@ export async function verifyPaymentAction(
       action: 'action.verify_payment',
       requestId,
       organizationId: params.organizationId,
-      userId: context.userId,
+      userId: context?.userId,
     });
   }
 }

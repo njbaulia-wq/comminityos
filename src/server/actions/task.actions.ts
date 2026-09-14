@@ -1,3 +1,5 @@
+'use server';
+
 import {
   CreateTaskInput,
   TaskStatus,
@@ -14,9 +16,11 @@ import {
   TaskRepository,
   CallerContext,
 } from '@/server/services/task.service';
+import { createSupabaseTaskRepo } from '@/server/repositories/supabase-task.repo';
+import { resolveCallerContext } from './context-helper';
 import { validateUuidParams } from '@/lib/validation/common.schema';
 
-export interface TaskActionContext extends CallerContext {
+export interface TaskActionContext extends Partial<CallerContext> {
   requestId?: string;
   repo?: TaskRepository;
 }
@@ -33,21 +37,33 @@ const fallbackRepo: TaskRepository = {
   listChecklists: async () => [],
 };
 
+function getRepo(explicit?: TaskRepository): TaskRepository {
+  if (explicit) return explicit;
+  try {
+    return createSupabaseTaskRepo();
+  } catch {
+    return fallbackRepo;
+  }
+}
+
 export async function createTaskAction(
   rawInput: CreateTaskInput,
-  context: TaskActionContext
+  context?: TaskActionContext
 ): Promise<ActionResult<any>> {
-  const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
+  const requestId = context?.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
+    const caller = await resolveCallerContext(rawInput.organizationId, context);
+    const repo = getRepo(context?.repo);
+
     const task = await createTask({
       input: rawInput,
       caller: {
-        userId: context.userId,
-        roleName: context.roleName,
+        userId: caller.userId,
+        roleName: caller.roleName,
       },
-      repo: context.repo || fallbackRepo,
-      requestId,
+      repo,
+      requestId: caller.requestId,
     });
 
     return successResult(task);
@@ -58,7 +74,7 @@ export async function createTaskAction(
       action: 'action.create_task',
       requestId,
       organizationId: rawInput.organizationId,
-      userId: context.userId,
+      userId: context?.userId,
     });
   }
 }
@@ -69,9 +85,9 @@ export async function updateTaskStatusAction(
     taskId: string;
     status: TaskStatus;
   },
-  context: TaskActionContext
+  context?: TaskActionContext
 ): Promise<ActionResult<any>> {
-  const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
+  const requestId = context?.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
     validateUuidParams({
@@ -79,16 +95,19 @@ export async function updateTaskStatusAction(
       taskId: params.taskId,
     });
 
+    const caller = await resolveCallerContext(params.organizationId, context);
+    const repo = getRepo(context?.repo);
+
     const updated = await updateTaskStatus({
       organizationId: params.organizationId,
       taskId: params.taskId,
       status: params.status,
       caller: {
-        userId: context.userId,
-        roleName: context.roleName,
+        userId: caller.userId,
+        roleName: caller.roleName,
       },
-      repo: context.repo || fallbackRepo,
-      requestId,
+      repo,
+      requestId: caller.requestId,
     });
 
     return successResult(updated);
@@ -99,7 +118,7 @@ export async function updateTaskStatusAction(
       action: 'action.update_task_status',
       requestId,
       organizationId: params.organizationId,
-      userId: context.userId,
+      userId: context?.userId,
     });
   }
 }
@@ -111,9 +130,9 @@ export async function toggleChecklistItemAction(
     checklistItemId: string;
     isDone: boolean;
   },
-  context: TaskActionContext
+  context?: TaskActionContext
 ): Promise<ActionResult<any>> {
-  const requestId = context.requestId || 'req-' + Math.random().toString(36).substring(7);
+  const requestId = context?.requestId || 'req-' + Math.random().toString(36).substring(7);
 
   try {
     validateUuidParams({
@@ -122,17 +141,20 @@ export async function toggleChecklistItemAction(
       checklistItemId: params.checklistItemId,
     });
 
+    const caller = await resolveCallerContext(params.organizationId, context);
+    const repo = getRepo(context?.repo);
+
     const result = await toggleChecklistItem({
       organizationId: params.organizationId,
       taskId: params.taskId,
       checklistItemId: params.checklistItemId,
       isDone: params.isDone,
       caller: {
-        userId: context.userId,
-        roleName: context.roleName,
+        userId: caller.userId,
+        roleName: caller.roleName,
       },
-      repo: context.repo || fallbackRepo,
-      requestId,
+      repo,
+      requestId: caller.requestId,
     });
 
     return successResult(result);
@@ -143,7 +165,7 @@ export async function toggleChecklistItemAction(
       action: 'action.toggle_checklist_item',
       requestId,
       organizationId: params.organizationId,
-      userId: context.userId,
+      userId: context?.userId,
     });
   }
 }
