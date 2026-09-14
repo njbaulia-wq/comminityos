@@ -37,7 +37,11 @@ export default function SignupPage() {
       });
 
       if (result.success) {
-        router.push('/login?registered=true');
+        // If organization was auto-linked and session established, go straight to workspace
+        const destination = result.data?.defaultOrgSlug
+          ? `/${result.data.defaultOrgSlug}/overview`
+          : '/login?registered=true';
+        window.location.href = destination;
       } else {
         setErrorMsg(result.error.message || 'Pendaftaran gagal. Silakan periksa formulir.');
       }
