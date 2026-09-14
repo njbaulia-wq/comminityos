@@ -30,25 +30,14 @@ export default function ActivitiesPage({ params }: ActivitiesPageProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [organizationId, setOrganizationId] = useState('11111111-1111-4111-8111-111111111111');
 
-  const [activities, setActivities] = useState<ActivityListItem[]>([
-    {
-      id: 'act-1',
-      title: 'Peringatan Hari Kemerdekaan RI Ke-81',
-      description: 'Perlombaan tradisional warga RT 05 dan malam pentas seni',
-      status: 'planned',
-      startDate: '2026-08-17',
-      budgetEstimate: 4500000,
-    },
-  ]);
+  const [activities, setActivities] = useState<ActivityListItem[]>([]);
 
   const loadActivities = useCallback(async (slug: string) => {
     try {
       const res = await getActivitiesData(slug);
       if (res) {
         setOrganizationId(res.organizationId);
-        if (res.activities.length > 0) {
-          setActivities(res.activities);
-        }
+        setActivities(res.activities);
       }
     } catch {
       // Offline test environment fallback

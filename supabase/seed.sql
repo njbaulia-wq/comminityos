@@ -57,8 +57,9 @@ ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;
 INSERT INTO transactions (id, organization_id, account_id, category_id, amount, type, status, description, transaction_date)
 VALUES
     ('55555555-5555-4555-8555-555555555555', '11111111-1111-4111-8111-111111111111', '33333333-3333-4333-8333-333333333333', 'c1111111-1111-4111-8111-111111111111', 450000.00, 'income', 'posted', 'Iuran Sampah Warga RT 05', '2026-09-01'),
-    ('66666666-6666-4666-8666-666666666666', '11111111-1111-4111-8111-111111111111', '33333333-3333-4333-8333-333333333333', 'c2222222-2222-4222-8222-222222222222', 75000.00, 'expense', 'posted', 'Beli Lampu Gang', '2026-09-05')
-ON CONFLICT (id) DO NOTHING;
+    ('66666666-6666-4666-8666-666666666666', '11111111-1111-4111-8111-111111111111', '33333333-3333-4333-8333-333333333333', 'c2222222-2222-4222-8222-222222222222', 75000.00, 'expense', 'posted', 'Beli Lampu Gang', '2026-09-05'),
+    ('77777777-1111-4777-8777-111111111111', '11111111-1111-4111-8111-111111111111', '33333333-3333-4333-8333-333333333333', 'c2222222-2222-4222-8222-222222222222', 750000.00, 'expense', 'pending_approval', 'Pengajuan Belanja Lampu Gang Seksi Sarpras', '2026-09-12')
+ON CONFLICT (id) DO UPDATE SET status = EXCLUDED.status, description = EXCLUDED.description, amount = EXCLUDED.amount;
 
 -- 7. Due Plans & Items
 -- Sesuai schema 20260913000005_finance_ledger:
@@ -75,6 +76,12 @@ VALUES
     ('99999999-9999-4999-8999-999999999999', '11111111-1111-4111-8111-111111111111', '77777777-7777-4777-8777-777777777777', 'e2222222-2222-4222-8222-222222222222', 50000.00, 'pending_verification'),
     ('00000000-0000-4000-8000-000000000000', '11111111-1111-4111-8111-111111111111', '77777777-7777-4777-8777-777777777777', 'e3333333-3333-4333-8333-333333333333', 50000.00, 'unpaid')
 ON CONFLICT (id) DO UPDATE SET status = EXCLUDED.status;
+
+-- payments: id, organization_id, due_item_id, amount, payment_method, proof_file_url
+INSERT INTO payments (id, organization_id, due_item_id, amount, payment_method, proof_file_url)
+VALUES
+    ('baaaaaaa-1111-4111-8111-111111111111', '11111111-1111-4111-8111-111111111111', '99999999-9999-4999-8999-999999999999', 50000.00, 'transfer', 'https://placehold.co/600x400/png?text=Bukti+Transfer+Iuran')
+ON CONFLICT (id) DO UPDATE SET amount = EXCLUDED.amount, proof_file_url = EXCLUDED.proof_file_url;
 
 -- 8. Activities & Tasks
 -- Sesuai schema 20260913000004_activities_tasks:

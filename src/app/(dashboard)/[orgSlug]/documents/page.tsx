@@ -30,41 +30,16 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [isUploaderOpen, setIsUploaderOpen] = useState(false);
 
-  const [folders, setFolders] = useState<FolderItem[]>([
-    { id: 'f-1', name: 'Surat Keputusan RT' },
-    { id: 'f-2', name: 'Laporan Pertanggungjawaban' },
-  ]);
-
-  const [documents, setDocuments] = useState<DocumentViewItem[]>([
-    {
-      id: 'd-1',
-      name: 'SK_Kepengurusan_2026.pdf',
-      fileSize: 1024 * 1024 * 2, // 2MB
-      mimeType: 'application/pdf',
-      createdAt: '2026-09-10',
-      folderId: 'f-1',
-    },
-    {
-      id: 'd-2',
-      name: 'Denah_Pos_Ronda.png',
-      fileSize: 1024 * 500, // 500KB
-      mimeType: 'image/png',
-      createdAt: '2026-09-11',
-      folderId: null,
-    },
-  ]);
+  const [folders, setFolders] = useState<FolderItem[]>([]);
+  const [documents, setDocuments] = useState<DocumentViewItem[]>([]);
 
   const loadDocuments = useCallback(async (slug: string) => {
     try {
       const res = await getDocumentsData(slug);
       if (res) {
         setOrganizationId(res.organizationId);
-        if (res.folders.length > 0) {
-          setFolders(res.folders);
-        }
-        if (res.documents.length > 0) {
-          setDocuments(res.documents);
-        }
+        setFolders(res.folders);
+        setDocuments(res.documents);
       }
     } catch {
       // Fallback
@@ -84,18 +59,8 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
 
   const handleUpload = async (file: File, folderId?: string | null) => {
     const filePath = `${organizationId}/${Date.now()}_${file.name}`;
-    const newDoc: DocumentViewItem = {
-      id: 'd-' + Date.now(),
-      name: file.name,
-      fileSize: file.size,
-      mimeType: file.type || 'application/octet-stream',
-      createdAt: new Date().toISOString().split('T')[0],
-      folderId: folderId || null,
-    };
-    setDocuments((prev) => [newDoc, ...prev]);
-
     try {
-      await uploadDocumentAction({
+      const res = await uploadDocumentAction({
         organizationId,
         folderId: folderId || undefined,
         name: file.name,
@@ -104,11 +69,15 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
         mimeType: file.type || 'application/octet-stream',
         storageBucket: 'org-documents',
       });
+      if (!res.success) {
+        alert(res.error?.message || 'Gagal mengunggah dokumen');
+        return;
+      }
       if (resolvedParams) {
         await loadDocuments(resolvedParams.orgSlug);
       }
     } catch (err: any) {
-      console.error('Gagal mengunggah dokumen:', err);
+      alert(err?.message || 'Gagal mengunggah dokumen');
     }
   };
 
@@ -129,18 +98,25 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
   };
 
   const handleDelete = async (doc: DocumentViewItem) => {
+    const prevDocs = [...documents];
     setDocuments((prev) => prev.filter((d) => d.id !== doc.id));
 
     try {
-      await deleteDocumentAction({
+      const res = await deleteDocumentAction({
         organizationId,
         documentId: doc.id,
       });
+      if (!res.success) {
+        setDocuments(prevDocs);
+        alert(res.error?.message || 'Gagal menghapus dokumen');
+        return;
+      }
       if (resolvedParams) {
         await loadDocuments(resolvedParams.orgSlug);
       }
     } catch (err: any) {
-      console.error('Gagal menghapus dokumen:', err);
+      setDocuments(prevDocs);
+      alert(err?.message || 'Gagal menghapus dokumen');
     }
   };
 

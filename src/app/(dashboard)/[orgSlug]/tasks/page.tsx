@@ -20,40 +20,14 @@ export default function TasksPage({ params }: TasksPageProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const [tasks, setTasks] = useState<TaskItem[]>([
-    {
-      id: 'task-1',
-      title: 'Koordinasi Keamanan Pos Ronda',
-      description: 'Jadwal giliran ronda malam minggu',
-      status: 'todo',
-      priority: 'high',
-      totalChecklists: 3,
-      completedChecklists: 1,
-    },
-    {
-      id: 'task-2',
-      title: 'Perbaikan Lampu Penerangan Jalan',
-      description: 'Gang Mawar RT 05 mati total',
-      status: 'in_progress',
-      priority: 'urgent',
-    },
-    {
-      id: 'task-3',
-      title: 'Pendataan Warga Baru Kost',
-      description: 'Rumah no. 14B',
-      status: 'done',
-      priority: 'low',
-    },
-  ]);
+  const [tasks, setTasks] = useState<TaskItem[]>([]);
 
   const loadTasks = useCallback(async (slug: string) => {
     try {
       const res = await getTasksData(slug);
       if (res) {
         setOrganizationId(res.organizationId);
-        if (res.tasks.length > 0) {
-          setTasks(res.tasks);
-        }
+        setTasks(res.tasks);
       }
     } catch {
       // Fallback
@@ -68,18 +42,24 @@ export default function TasksPage({ params }: TasksPageProps) {
   }, [params, loadTasks]);
 
   const handleStatusChange = async (taskId: string, newStatus: TaskItem['status']) => {
+    const prevTasks = [...tasks];
     setTasks((prev) =>
       prev.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t))
     );
 
     try {
-      await updateTaskStatusAction({
+      const res = await updateTaskStatusAction({
         organizationId,
         taskId,
         status: newStatus,
       });
+      if (!res.success) {
+        setTasks(prevTasks);
+        alert(res.error?.message || 'Gagal memperbarui status tugas');
+      }
     } catch (err: any) {
-      console.error('Gagal memperbarui status tugas:', err);
+      setTasks(prevTasks);
+      alert(err?.message || 'Gagal memperbarui status tugas');
     }
   };
 

@@ -33,61 +33,12 @@ export default function FinancePage({ params }: FinancePageProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [organizationId, setOrganizationId] = useState('11111111-1111-4111-8111-111111111111');
-  const [totalBalance, setTotalBalance] = useState(375000);
-  const [totalIncome, setTotalIncome] = useState(450000);
-  const [totalExpense, setTotalExpense] = useState(75000);
-  const [accounts, setAccounts] = useState<Array<{ id: string; name: string }>>([
-    { id: '33333333-3333-4333-8333-333333333333', name: 'Kas Operasional Tunai' },
-  ]);
-
-  const [transactions, setTransactions] = useState<TransactionItem[]>([
-    {
-      id: 'tx-1',
-      description: 'Iuran Sampah Warga RT 05',
-      amount: 450000,
-      type: 'income',
-      status: 'posted',
-      transactionDate: '2026-09-10',
-      accountName: 'Kas Tunai',
-    },
-    {
-      id: 'tx-2',
-      description: 'Beli Lampu Gang',
-      amount: 75000,
-      type: 'expense',
-      status: 'draft',
-      transactionDate: '2026-09-11',
-      accountName: 'Kas Tunai',
-    },
-  ]);
-
-  const [dues, setDues] = useState<DueCitizenItem[]>([
-    {
-      id: 'item-1',
-      citizenName: 'Bambang Sudibyo',
-      houseNumber: '12A',
-      amount: 50000,
-      status: 'paid',
-      planTitle: 'Iuran Bulanan September',
-    },
-    {
-      id: 'item-2',
-      citizenName: 'Siti Rahma',
-      houseNumber: '14',
-      amount: 50000,
-      status: 'pending_verification',
-      planTitle: 'Iuran Bulanan September',
-      paymentId: 'pay-2',
-    },
-    {
-      id: 'item-3',
-      citizenName: 'Agus Santoso',
-      houseNumber: '15B',
-      amount: 50000,
-      status: 'unpaid',
-      planTitle: 'Iuran Bulanan September',
-    },
-  ]);
+  const [totalBalance, setTotalBalance] = useState(0);
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [totalExpense, setTotalExpense] = useState(0);
+  const [accounts, setAccounts] = useState<Array<{ id: string; name: string }>>([]);
+  const [transactions, setTransactions] = useState<TransactionItem[]>([]);
+  const [dues, setDues] = useState<DueCitizenItem[]>([]);
 
   const loadData = useCallback(async (slug: string) => {
     try {
@@ -97,15 +48,9 @@ export default function FinancePage({ params }: FinancePageProps) {
         setTotalBalance(res.totalBalance);
         setTotalIncome(res.totalIncome);
         setTotalExpense(res.totalExpense);
-        if (res.transactions.length > 0) {
-          setTransactions(res.transactions);
-        }
-        if (res.dues.length > 0) {
-          setDues(res.dues);
-        }
-        if (res.accounts.length > 0) {
-          setAccounts(res.accounts);
-        }
+        setTransactions(res.transactions);
+        setDues(res.dues);
+        setAccounts(res.accounts);
       }
     } catch {
       // Keep default state in offline test environment
@@ -127,21 +72,25 @@ export default function FinancePage({ params }: FinancePageProps) {
   const handleConfirmVerify = async (item: DueCitizenItem) => {
     try {
       if (item.paymentId && accounts.length > 0) {
-        await verifyPaymentAction({
+        const res = await verifyPaymentAction({
           organizationId,
           paymentId: item.paymentId,
           accountId: accounts[0].id,
         });
+        if (!res.success) {
+          alert(res.error?.message || 'Gagal verifikasi pembayaran');
+          return;
+        }
       }
 
       setDues((prev) =>
         prev.map((d) => (d.id === item.id ? { ...d, status: 'paid' } : d))
       );
       if (resolvedParams) {
-        loadData(resolvedParams.orgSlug);
+        await loadData(resolvedParams.orgSlug);
       }
     } catch (err: any) {
-      console.error('Gagal verifikasi pembayaran:', err);
+      alert(err?.message || 'Gagal verifikasi pembayaran');
     } finally {
       setIsVerifyOpen(false);
       setSelectedDueItem(null);

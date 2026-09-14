@@ -16,47 +16,14 @@ interface OverviewPageProps {
 export default function OverviewPage({ params }: OverviewPageProps) {
   const [resolvedParams, setResolvedParams] = useState<{ orgSlug: string } | null>(null);
   const [organizationId, setOrganizationId] = useState('11111111-1111-4111-8111-111111111111');
-  const [balance, setBalance] = useState(12500000);
-  const [monthlyIncome, setMonthlyIncome] = useState(4500000);
-  const [monthlyExpense, setMonthlyExpense] = useState(1200000);
-  const [duesComplianceRate, setDuesComplianceRate] = useState(85);
+  const [balance, setBalance] = useState(0);
+  const [monthlyIncome, setMonthlyIncome] = useState(0);
+  const [monthlyExpense, setMonthlyExpense] = useState(0);
+  const [duesComplianceRate, setDuesComplianceRate] = useState(100);
 
-  const [queue, setQueue] = useState<ActionQueueItem[]>([
-    {
-      id: 'q-1',
-      title: 'Persetujuan Pengeluaran: Lampu Gang',
-      description: 'Pengajuan belanja Rp 750.000 oleh Seksi Sarpras',
-      type: 'expense_approval',
-      priority: 'high',
-      createdAt: '2026-09-12',
-    },
-    {
-      id: 'q-2',
-      title: 'Verifikasi Iuran: Siti Rahma',
-      description: 'Bukti transfer Rp 50.000 untuk Iuran September',
-      type: 'dues_verification',
-      priority: 'medium',
-      createdAt: '2026-09-13',
-    },
-  ]);
-
-  const [activities, setActivities] = useState<AgendaActivity[]>([
-    {
-      id: 'act-1',
-      title: 'Kerja Bakti Lingkungan RT 05',
-      startDate: '2026-09-20',
-      status: 'active',
-    },
-  ]);
-
-  const [tasks, setTasks] = useState<UrgentTask[]>([
-    {
-      id: 't-1',
-      title: 'Beli Cat Pos Ronda',
-      dueDate: '2026-09-18',
-      priority: 'urgent',
-    },
-  ]);
+  const [queue, setQueue] = useState<ActionQueueItem[]>([]);
+  const [activities, setActivities] = useState<AgendaActivity[]>([]);
+  const [tasks, setTasks] = useState<UrgentTask[]>([]);
 
   const loadOverview = useCallback(async (slug: string) => {
     try {
@@ -67,15 +34,9 @@ export default function OverviewPage({ params }: OverviewPageProps) {
         setMonthlyIncome(data.financeSnapshot.monthlyIncome);
         setMonthlyExpense(data.financeSnapshot.monthlyExpense);
         setDuesComplianceRate(data.financeSnapshot.duesComplianceRate);
-        if (data.actionQueue.length > 0) {
-          setQueue(data.actionQueue);
-        }
-        if (data.activities.length > 0) {
-          setActivities(data.activities);
-        }
-        if (data.tasks.length > 0) {
-          setTasks(data.tasks);
-        }
+        setQueue(data.actionQueue);
+        setActivities(data.activities);
+        setTasks(data.tasks);
       }
     } catch {
       // Fallback
@@ -92,10 +53,14 @@ export default function OverviewPage({ params }: OverviewPageProps) {
   const handleAction = async (item: ActionQueueItem) => {
     if (item.type === 'expense_approval') {
       try {
-        await approveTransactionAction({
+        const res = await approveTransactionAction({
           organizationId,
           transactionId: item.id,
         });
+        if (!res.success) {
+          alert(res.error?.message || 'Gagal memproses persetujuan');
+          return;
+        }
         setQueue((prev) => prev.filter((q) => q.id !== item.id));
         if (resolvedParams) {
           await loadOverview(resolvedParams.orgSlug);
